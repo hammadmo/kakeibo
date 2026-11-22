@@ -31,4 +31,49 @@ enum SeedData {
         }
         try? context.save()
     }
+
+    // MARK: Fixture logs (S-002, S-006, S-007)
+
+    /// Where test runs read Claude Code logs from (UsageService.root).
+    static let logsDirectory = URL(fileURLWithPath: "/tmp/Kakeibo-logs")
+
+    /// Writes 30 days of Claude Code-style logs for five projects and three
+    /// models. Today has 1.24 M tokens in five projects, so "+2 more" shows.
+    static func writeLogs() {
+        guard Store.isOverridden else { return }
+        let fm = FileManager.default
+        try? fm.removeItem(at: logsDirectory)
+        // (project, today's tokens split as input/output/cache write/cache read)
+        let projects: [(String, Int)] = [
+            ("/Users/me/Projects/Kakeibo", 412_000),
+            ("/Users/me/Projects/vorssaint", 356_000),
+            ("/Users/me/mac battery app/Hachibu", 268_000),
+            ("/Users/me/Projects/synthetic-city", 132_000),
+            ("/Users/me/Desktop/passporttrails-seo-landing-pages-and-keyword-research", 72_000),
+        ]
+        let models = ["claude-opus-5-5", "claude-sonnet-5-5", "claude-fable-5-2"]
+        let calendar = Calendar.current
+        let noon = calendar.date(bySettingHour: 0, minute: 30, second: 0, of: .now) ?? .now
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        var serial = 0
+        for (index, (project, todayTokens)) in projects.enumerated() {
+            let folder = logsDirectory.appending(path: project.replacingOccurrences(of: "/", with: "-"))
+            try? fm.createDirectory(at: folder, withIntermediateDirectories: true)
+            var lines: [String] = []
+            for day in 0..<30 {
+                // Older days vary so charts have shape; today is exact.
+                let scale = day == 0 ? 1.0 : 0.3 + Double((day * 7 + index * 3) % 10) / 10
+                let total = Int(Double(todayTokens) * scale)
+                guard total > 0, !(day > 0 && (day + index) % 6 == 0) else { continue }
+                let time = calendar.date(byAdding: .day, value: -day, to: noon)!.addingTimeInterval(Double(index) * 60)
+                let model = models[(day + index) % models.count]
+                let output = total / 50, write = total / 10, input = total / 100
+                let read = total - output - write - input
+                serial += 1
+                lines.append(#"{"message":{"model":"\#(model)","id":"msg_seed_\#(serial)","type":"message","role":"assistant","content":[],"usage":{"input_tokens":\#(input),"cache_creation_input_tokens":\#(write),"cache_read_input_tokens":\#(read),"output_tokens":\#(output),"cache_creation":{"ephemeral_1h_input_tokens":\#(write),"ephemeral_5m_input_tokens":0}}},"requestId":"req_seed_\#(serial)","type":"assistant","timestamp":"\#(formatter.string(from: time))","cwd":"\#(project)","sessionId":"seed-\#(index)"}"#)
+            }
+            try? (lines.joined(separator: "\n") + "\n").write(to: folder.appending(path: "seed.jsonl"), atomically: true, encoding: .utf8)
+        }
+    }
 }

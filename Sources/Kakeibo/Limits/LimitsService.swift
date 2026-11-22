@@ -32,6 +32,7 @@ final class LimitsService {
 
     init(container: ModelContainer?) {
         self.container = container
+        pruneOld()
         loadLast()
     }
 
@@ -92,6 +93,16 @@ final class LimitsService {
             sessionUsed: session.used, sessionResets: session.resets ?? .now,
             weeklyUsed: weekly.used, weeklyResets: weekly.resets ?? .now,
             fableUsed: limits.fable?.used, fableResets: limits.fable?.resets))
+        try? context.save()
+    }
+
+    /// Readings older than 90 days are deleted at launch.
+    static let keepDays = 90
+
+    func pruneOld(now: Date = .now) {
+        guard let context = container?.mainContext else { return }
+        let cutoff = now.addingTimeInterval(-Double(Self.keepDays) * 86_400)
+        try? context.delete(model: LimitSnapshot.self, where: #Predicate { $0.takenAt < cutoff })
         try? context.save()
     }
 

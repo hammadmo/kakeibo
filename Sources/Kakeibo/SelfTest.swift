@@ -49,6 +49,31 @@ enum SelfTest {
             let again = await model.limits.fetch()
             check("a second fetch within a minute is skipped", !again)
 
+            // S-006, S-007: today's totals from the fixture logs.
+            SeedData.writeLogs()
+            await model.usage.refresh()
+            check("today's tokens are read from the logs", model.usage.today.tokens == 1_240_000,
+                  "\(model.usage.today.tokens)")
+            check("today's cost is estimated", model.usage.today.cost > 0)
+            check("five Projects today, most first",
+                  model.usage.todayByProject.count == 5 && model.usage.todayByProject.first?.name == "Kakeibo")
+
+            // S-008: Refresh re-reads logs but doesn't fetch limits again within a minute.
+            let lastUpdate = model.limits.updatedAt
+            await model.refreshNow()
+            check("Refresh within a minute keeps the last limits", model.limits.updatedAt == lastUpdate)
+
+            // S-009: old readings are deleted, recent ones kept.
+            let old = LimitSnapshot(sessionUsed: 1, sessionResets: .now, weeklyUsed: 1, weeklyResets: .now)
+            old.takenAt = Date.now.addingTimeInterval(-91 * 86_400)
+            let recent = LimitSnapshot(sessionUsed: 2, sessionResets: .now, weeklyUsed: 2, weeklyResets: .now)
+            context.insert(old)
+            context.insert(recent)
+            try? context.save()
+            model.limits.pruneOld()
+            let left = snapshots()
+            check("readings older than 90 days are deleted", !left.contains { $0.sessionUsed == 1 } && left.contains { $0.sessionUsed == 2 })
+
             print(failures == 0 ? "SELFTEST PASS \(count) checks" : "SELFTEST FAIL \(failures) of \(count) checks")
             finish(code: failures == 0 ? 0 : 1)
         }

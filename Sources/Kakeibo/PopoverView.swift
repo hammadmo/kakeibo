@@ -2,8 +2,8 @@ import AppKit
 import KakeiboKit
 import SwiftUI
 
-/// The popover under the menu bar item: three Gauges with when each Resets.
-/// Today's Tokens (S-006), Today by Project (S-007), and the footer follow.
+/// The popover under the menu bar item: three Gauges with when each Resets,
+/// Today's Tokens (S-006), Today by Project (S-007), and the footer (S-008).
 struct PopoverView: View {
     @Environment(AppModel.self) private var model
 
@@ -14,6 +14,9 @@ struct PopoverView: View {
                 GaugesSection(limits: limits.current, status: limits.status, now: context.date)
             }
             StatusLine(status: limits.status, updatedAt: limits.updatedAt)
+            TodayCard()
+            TodayByProject()
+            PopoverFooter()
         }
         .padding(Space.lg)
         .frame(width: Metric.popoverWidth)

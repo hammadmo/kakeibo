@@ -36,7 +36,7 @@ struct KitGallery: View {
 
             section("Buttons") {
                 HStack(spacing: Space.sm) {
-                    Button("Open Dashboard…") {}.buttonStyle(.kit())
+                    Button("Dashboard…") {}.buttonStyle(.kit())
                     Button("Settings…") {}.buttonStyle(.kit(.secondary))
                     Button("Quit Kakeibo") {}.buttonStyle(.kit(.ghost))
                 }

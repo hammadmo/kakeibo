@@ -94,9 +94,10 @@ enum Startup {
         guard !started else { return }
         started = true
         SeedData.insertIfRequested(into: model)
+        SeedData.writeLogs()
         SelfTest.runIfRequested(model: model)
         LimitsProbe.runIfRequested(model: model)
-        if !SelfTest.requested && !LimitsProbe.requested { model.limits.start() }
+        if !SelfTest.requested && !LimitsProbe.requested { model.start() }
         Snapshot.runIfRequested(model: model, openWindow: openWindow, openSettings: openSettings)
     }
 }

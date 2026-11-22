@@ -86,7 +86,7 @@ Acceptance:
 - [snap] One card: "Today" with "1.24 M tokens" and "$18.40", and a caption "Estimated at API prices".
 - [unit] 1,240,000 formats as "1.24 M"; 980 as "980"; cost under $0.01 as "<$0.01".
 - [snap] Zero activity reads "No Claude Code activity today".
-Status: todo
+Status: done
 UX:
 - Surface: inline card in the popover.
 - Words: hover on the cost: "Estimated from Claude Code logs at API prices. Your plan is not billed this amount."
@@ -98,7 +98,7 @@ Depends: S-006
 Acceptance:
 - [snap] Up to three rows: Project name, a thin gold bar for its share, and Tokens. A fourth row "+2 more" shows when there are more.
 - [snap] A long Project name truncates in the middle; hover shows the full path.
-Status: todo
+Status: done
 UX:
 - Surface: inline list in the popover.
 - States: empty → the row hides; "+2 more" opens the Dashboard (S-010).
@@ -111,7 +111,7 @@ Depends: S-005
 Acceptance:
 - [snap] The footer shows "Updated 14:02" and a Refresh button; while working, the button is replaced by a small spinner.
 - [self] Command-R in the popover refreshes; a second press within a minute only re-reads logs.
-Status: todo
+Status: done
 UX:
 - Flow: Refresh button or Command-R -> spinner -> "Updated 14:07".
 - Surface: inline footer button.
@@ -124,7 +124,7 @@ Depends: S-003
 Acceptance:
 - [unit] Every LimitSnapshot is stored in SwiftData; the newest one loads before the first fetch.
 - [self] Snapshots older than 90 days are deleted at launch.
-Status: todo
+Status: done
 
 ---
 
@@ -135,7 +135,7 @@ As the user, I open a window with all my usage from the popover.
 Screens: dashboard-light.png, dashboard-dark.png, dashboard-empty-dark.png
 Depends: S-005
 Acceptance:
-- [snap] "Open Dashboard…" in the popover footer opens one window (Command-D); a second click brings it forward.
+- [snap] "Dashboard…" in the popover footer opens one window (Command-D); a second click brings it forward.
 - [snap] No logs at all: "No Claude Code activity yet. Kakeibo reads the logs in ~/.claude/projects."
 Status: todo
 
@@ -299,7 +299,7 @@ Status: todo
 As the user, I quit Kakeibo from the popover.
 Screens: popover-dark.png
 Acceptance:
-- [snap] Footer reads "Open Dashboard…  Settings…  Quit Kakeibo", like Hachibu.
+- [snap] Footer reads "Dashboard…  Settings…  Quit Kakeibo", like Hachibu.
 - [self] Command-Q in the popover quits.
 Status: todo
 

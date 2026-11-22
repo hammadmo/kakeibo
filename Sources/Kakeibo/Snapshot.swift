@@ -52,18 +52,18 @@ enum Snapshot {
                 try? await Task.sleep(for: .seconds(1))
                 // The real popover has no traffic lights.
                 for kind in [NSWindow.ButtonType.closeButton, .miniaturizeButton, .zoomButton] {
-                    window(titled: PopoverPreview.title)?.standardWindowButton(kind)?.isHidden = true
+                    window(id: PopoverPreview.windowID)?.standardWindowButton(kind)?.isHidden = true
                 }
                 for mode in ["light", "dark"] {
                     NSApp.appearance = NSAppearance(named: mode == "light" ? .aqua : .darkAqua)
                     for (page, fixture) in popoverPages {
                         model.limits.applyFixture(fixture)
                         try? await Task.sleep(for: .seconds(0.8))
-                        capture(to: "\(dir)/\(page)-\(mode).png", window: window(titled: PopoverPreview.title))
+                        capture(to: "\(dir)/\(page)-\(mode).png", window: window(id: PopoverPreview.windowID))
                     }
                 }
                 model.limits.applyFixture("normal")
-                window(titled: PopoverPreview.title)?.close()
+                window(id: PopoverPreview.windowID)?.close()
             }
 
             if wants("dashboard") {
@@ -74,7 +74,7 @@ enum Snapshot {
                     for page in SidebarItem.allCases {
                         model.sidebar = page
                         try? await Task.sleep(for: .seconds(0.8))
-                        capture(to: "\(dir)/\(page.rawValue)-\(mode).png", window: window(titled: Dashboard.title))
+                        capture(to: "\(dir)/\(page.rawValue)-\(mode).png", window: window(id: Dashboard.windowID))
                     }
                 }
             }
@@ -87,11 +87,7 @@ enum Snapshot {
                     for tab in SettingsTab.allCases {
                         model.settingsTab = tab
                         try? await Task.sleep(for: .seconds(0.8))
-                        let settings = NSApp.windows.first {
-                            $0.isVisible && $0.title != Dashboard.title && $0.title != PopoverPreview.title
-                                && $0.styleMask.contains(.titled) && !$0.isSheet
-                        }
-                        capture(to: "\(dir)/settings-\(tab.rawValue)-\(mode).png", window: settings)
+                        capture(to: "\(dir)/settings-\(tab.rawValue)-\(mode).png", window: settingsWindow)
                     }
                 }
             }
@@ -102,8 +98,14 @@ enum Snapshot {
         }
     }
 
-    private static func window(titled title: String) -> NSWindow? {
-        NSApp.windows.first { $0.isVisible && $0.title == title }
+    /// SwiftUI names a scene's window after its id ("dashboard-AppWindow-1");
+    /// titles change with the page, so they can't find a window.
+    private static func window(id: String) -> NSWindow? {
+        NSApp.windows.first { $0.isVisible && ($0.identifier?.rawValue.hasPrefix(id) ?? false) }
+    }
+
+    private static var settingsWindow: NSWindow? {
+        NSApp.windows.first { $0.isVisible && ($0.identifier?.rawValue.contains("Settings") ?? false) }
     }
 
     /// Captures the real window with screencapture, so glass, sidebars, and
@@ -111,11 +113,11 @@ enum Snapshot {
     /// permission for the app that started this one (your terminal, or Claude).
     /// Without it, falls back to drawing the view hierarchy, which leaves
     /// sidebars and glass blank.
-    private static func capture(to path: String, window: NSWindow? = nil) {
+    private static func capture(to path: String, window: NSWindow?) {
         // Another app can hide this one while snapshots run (computer use hides
         // apps it does not control). Hidden windows cannot be captured.
         if NSApp.isHidden { NSApp.unhideWithoutActivation() }
-        guard let window = window ?? NSApp.windows.first(where: { $0.canBecomeMain && !$0.isSheet }) else {
+        guard let window else {
             print("SNAPSHOT no window")
             return
         }
@@ -129,15 +131,24 @@ enum Snapshot {
         GridProbes.shared.write(to: path.replacingOccurrences(of: ".png", with: "-layout.json"), window: size)
         try? FileManager.default.removeItem(atPath: path)
         // The first capture of a run sometimes misses the window. Try three times.
-        for _ in 1...3 {
+        for _ in 1...5 {
             let shot = Process()
             shot.executableURL = URL(fileURLWithPath: "/usr/sbin/screencapture")
             shot.arguments = ["-x", "-o", "-l", String(window.windowNumber), path]
             try? shot.run()
             shot.waitUntilExit()
             if FileManager.default.fileExists(atPath: path) {
-                print("SNAPSHOT \(path)")
-                return
+                // Stage Manager can hand back its small tilted thumbnail of the
+                // window. A real capture is at least the window's width in points.
+                let width = NSImageRep(contentsOfFile: path)?.pixelsWide ?? 0
+                if CGFloat(width) >= window.frame.width * window.backingScaleFactor * 0.95 {
+                    print("SNAPSHOT \(path)")
+                    return
+                }
+                try? FileManager.default.removeItem(atPath: path)
+                window.level = .floating
+                window.makeKeyAndOrderFront(nil)
+                NSApp.activate()
             }
             Thread.sleep(forTimeInterval: 0.5)
         }

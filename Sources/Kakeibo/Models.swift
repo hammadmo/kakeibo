@@ -56,6 +56,20 @@ final class AppModel {
     }
 
     let limits: LimitsService
+    let usage = UsageService()
+
+    /// Starts the limits and usage timers.
+    func start() {
+        limits.start()
+        usage.start()
+    }
+
+    /// Refresh (S-008): fetch limits (skipped if fetched under a minute ago) and read new logs.
+    func refreshNow() async {
+        async let limitsDone: Bool = limits.fetch()
+        await usage.refresh()
+        _ = await limitsDone
+    }
 
     init(container: ModelContainer) {
         self.container = container
