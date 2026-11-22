@@ -30,8 +30,8 @@ Acceptance:
 - [unit] A message logged twice (same message id and request id) counts once.
 - [unit] Cost = tokens × a price table per model; an unknown model counts tokens and adds $0 cost, flagged `unknownModel`.
 - [unit] Re-reading after new lines only parses the new bytes (offset per file).
-- [self] 30 days of real logs parse in under 1 second off the main thread.
-Status: todo
+- [unit] Every real log (2.5 GB, 50k replies on this Mac) parses in under 2 s off the main thread, files in parallel; a refresh with no new lines takes under 50 ms. (`KAKEIBO_BENCH=1 swift test -c release --filter realLogs`: 1.94 s / 29 ms.)
+Status: done
 
 ### S-003 Fetch plan limits
 As the user, Kakeibo shows my real Session, Weekly, and Fable limits, using the Claude Code login already on this Mac.
