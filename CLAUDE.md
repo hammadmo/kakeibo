@@ -18,7 +18,7 @@ SwiftData database and no server.
 - Unit tests: `swift test --scratch-path ~/Library/Developer/Kakeibo/test-build`.
 - Self-test (the app's real functions on a /tmp store): `tools/selftest.sh`. Exit 0 when every check passes. Add a check for every story with logic in `SelfTest.swift`.
 - After every UI change, take snapshots with sample data and look at them: `tools/snap.sh`.
-  It writes `/tmp/Kakeibo-shots/<page>-light.png` and `-dark.png` for every sidebar page, and `settings-<tab>-light.png` and `-dark.png` for every Settings tab, then quits. `APP_SNAPSHOT_PAGES=all,settings tools/snap.sh` limits the pages.
+  It writes `/tmp/Kakeibo-shots/<page>-light.png` and `-dark.png` for the menu bar, kit gallery, every popover state, every Dashboard page, and every Settings tab, then quits. `APP_SNAPSHOT_PAGES=popover,dashboard tools/snap.sh` limits the groups (menubar, kit, popover, dashboard, settings).
   For a panel, sheet, or popover, add a capture to `Snapshot.swift` like the Settings loop.
 - Snapshots, seed data, and the self-test refuse to run without `APP_STORE` in /tmp.
 - Never test against the real database in `~/Library/Application Support/Kakeibo/`.
@@ -27,8 +27,8 @@ SwiftData database and no server.
 
 ## Design rules
 
-- Use Apple's controls and system styles. Only the accent color is custom: `UI/Theme.swift` (`ThemeStore.defaultID`). People change it, and light or dark mode, in Settings > Appearance.
-- Views use `.tint`, `Palette.accent`, `Palette.accentText` (accent-colored text), and `Palette.onAccent` (text on an accent fill). Never hard-code colors, radii, or durations in views.
+- Kakeibo has its own look: Hachibu's design kit in `DesignKit/` (spec: `design/KIT.md`). The popover and menu bar read only `Ink`, `KitType`, `Metric`, `Motion`, and `kitCard()`. Never hard-code colors, radii, or durations in views.
+- The template's accent picker (`UI/Theme.swift`, Settings > Appearance) still exists and styles the Dashboard and Settings; see `docs/architecture-review-2026-11-23.md` before adding to it.
 - Compare accents: add `APP_ACCENT=<id>` to the snapshot command.
 - Spacing comes from `Space` in `UI/Grid.swift`, on a 4 pt grid. Mark custom pages and cards with `.gridArea` and `.gridProbe`.
 - Windows open calm: `.noInitialFocus()` on every window and sheet (no focus ring or selected text on open), `.fitsContent()` on sheets and Settings tabs (no scroll bar with nothing to scroll). System scroll bars. Both in `UI/WindowBehavior.swift`.
