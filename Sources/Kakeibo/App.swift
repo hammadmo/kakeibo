@@ -19,7 +19,16 @@ struct KakeiboApp: App {
     @State private var model = AppModel(container: Store.makeContainer())
 
     var body: some Scene {
-        Window("Kakeibo", id: "main") {
+        MenuBarExtra {
+            PopoverView()
+                .environment(model)
+        } label: {
+            MenuBarLabel()
+                .environment(model)
+        }
+        .menuBarExtraStyle(.window)
+
+        Window(Dashboard.title, id: Dashboard.windowID) {
             ContentView()
                 .environment(model)
                 .themed()
@@ -29,11 +38,23 @@ struct KakeiboApp: App {
         .modelContainer(model.container)
         .defaultSize(width: 1100, height: 720)
         .windowToolbarStyle(.unified)
+        .defaultLaunchBehavior(.suppressed)
         .commands {
             SidebarCommands()
             ToolbarCommands()
             CommandGroup(replacing: .newItem) {}
         }
+
+        // Opens only in snapshot runs: the popover in a plain window, so it can be captured.
+        Window(PopoverPreview.title, id: PopoverPreview.windowID) {
+            PopoverView()
+                .environment(model)
+                .overlay { if GridOverlay.enabled { GridOverlay() } }
+        }
+        .windowStyle(.hiddenTitleBar)
+        .windowResizability(.contentSize)
+        .restorationBehavior(.disabled)
+        .defaultLaunchBehavior(.suppressed)
 
         Settings {
             SettingsView()
@@ -44,18 +65,61 @@ struct KakeiboApp: App {
     }
 }
 
+enum Dashboard {
+    static let title = "Kakeibo"
+    static let windowID = "dashboard"
+}
+
+enum PopoverPreview {
+    static let title = "Kakeibo Popover"
+    static let windowID = "popover-preview"
+}
+
 final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
-        // Started from a terminal, the process is not a foreground app yet.
-        NSApp.setActivationPolicy(.regular)
-        NSApp.activate()
+        // A menu bar app: no Dock icon until the Dashboard or Settings opens.
+        // Test runs stay regular so their windows can be captured.
+        if Store.isOverridden {
+            NSApp.setActivationPolicy(.regular)
+            NSApp.activate()
+        } else {
+            NSApp.setActivationPolicy(.accessory)
+            ActivationPolicy.watch()
+        }
     }
 
-    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { true }
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }
 
     /// The self-test's result becomes the exit code, after a normal quit.
     func applicationWillTerminate(_ notification: Notification) {
         if SelfTest.requested { exit(SelfTest.exitCode) }
+    }
+}
+
+/// Shows Kakeibo in the Dock and the app switcher while a real window is open,
+/// and hides it again when the last one closes.
+@MainActor
+enum ActivationPolicy {
+    static func watch() {
+        let center = NotificationCenter.default
+        center.addObserver(forName: NSWindow.didBecomeKeyNotification, object: nil, queue: .main) { _ in
+            MainActor.assumeIsolated { update(closing: nil) }
+        }
+        center.addObserver(forName: NSWindow.willCloseNotification, object: nil, queue: .main) { note in
+            let closing = (note.object as AnyObject?).map(ObjectIdentifier.init)
+            MainActor.assumeIsolated { update(closing: closing) }
+        }
+    }
+
+    /// A real window has a title bar; the popover's panel does not.
+    private static func update(closing: ObjectIdentifier?) {
+        let open = NSApp.windows.contains {
+            $0.isVisible && $0.styleMask.contains(.titled) && !($0 is NSPanel) && ObjectIdentifier($0) != closing
+        }
+        let wanted: NSApplication.ActivationPolicy = open ? .regular : .accessory
+        guard NSApp.activationPolicy() != wanted else { return }
+        NSApp.setActivationPolicy(wanted)
+        if open { NSApp.activate() }
     }
 }
 

@@ -5,7 +5,6 @@ import KakeiboKit
 /// The Dashboard window. The menu bar item and popover come with S-004 and S-005.
 struct ContentView: View {
     @Environment(AppModel.self) private var model
-    @Environment(\.openSettings) private var openSettings
 
     var body: some View {
         NavigationSplitView {
@@ -15,13 +14,6 @@ struct ContentView: View {
             case .overview: OverviewPage()
             case .projects: ProjectsPage()
             }
-        }
-        .task {
-            SeedData.insertIfRequested(into: model)
-            SelfTest.runIfRequested(model: model)
-            LimitsProbe.runIfRequested(model: model)
-            if !SelfTest.requested && !LimitsProbe.requested { model.limits.start() }
-            Snapshot.runIfRequested(model: model, openSettings: openSettings)
         }
     }
 

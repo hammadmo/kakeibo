@@ -109,7 +109,8 @@ final class LimitsService {
 
     // MARK: Fixtures
 
-    private func applyFixture(_ name: String) {
+    /// Also used by snapshot mode to show each state.
+    func applyFixture(_ name: String) {
         let now = Date.now
         let normal = Limits(
             session: LimitWindow(used: 42, resets: now.addingTimeInterval(2 * 3600 + 14 * 60 + 30)),

@@ -55,7 +55,7 @@ Acceptance:
 - [snap] A small Gauge ring followed by "42%", in the menu bar's template color.
 - [snap] At 90% or more the ring and number turn vermilion.
 - [self] The width never changes between 9% and 100% (monospaced digits), so other menu bar icons don't jump.
-Status: todo
+Status: done
 UX:
 - Flow: glance -> click opens the popover.
 - Surface: menu bar item.
@@ -70,7 +70,7 @@ Acceptance:
 - [snap] The large Session Gauge is on top with "42" in the center and "Session · Resets in 2 h 14 m" below. Weekly and Fable are two smaller Gauges in one row, each with "Resets Mon 09:00".
 - [snap] At 90% or more, the Seal shows on that Gauge and a line reads "Session limit almost reached".
 - [self] The countdown updates each minute while the popover is open.
-Status: todo
+Status: done
 UX:
 - Flow: click menu bar item -> popover -> Escape or click outside closes.
 - Surface: popover (a few related readings tied to one control).

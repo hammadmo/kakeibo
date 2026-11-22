@@ -4,16 +4,22 @@ import SwiftUI
 
 /// Screenshot mode for agents.
 ///   APP_STORE=/tmp/test.store APP_SNAPSHOT=/tmp/shots ~/Applications/Kakeibo.app/Contents/MacOS/Kakeibo
-/// writes <page>-light.png and <page>-dark.png for every sidebar page, and
-/// settings-<tab>-light.png and settings-<tab>-dark.png for every Settings tab, then quits.
+/// writes <page>-light.png and <page>-dark.png for the menu bar item, the kit
+/// gallery, every popover state, every Dashboard page, and every Settings tab, then quits.
 /// Each PNG gets a <page>-<mode>-layout.json with the grid probes (tools/check-layout.swift).
-/// APP_SNAPSHOT_PAGES=all,starred limits the pages. Add "settings" to include Settings.
+/// APP_SNAPSHOT_PAGES=menubar,kit,popover,dashboard,settings picks groups.
 /// Add APP_ACCENT=<id> to see the pages in another accent.
 enum Snapshot {
     /// True during a snapshot run, so parts don't pick up a hover from the pointer.
     nonisolated static let isRunning = !(ProcessInfo.processInfo.environment["APP_SNAPSHOT"] ?? "").isEmpty
 
-    static func runIfRequested(model: AppModel, openSettings: OpenSettingsAction) {
+    /// Popover pages and the fixture each one shows.
+    static let popoverPages: [(page: String, fixture: String)] = [
+        ("popover", "normal"), ("popover-warning", "warning"), ("popover-signedout", "signedout"),
+        ("popover-offline", "offline"), ("popover-empty", "empty"),
+    ]
+
+    static func runIfRequested(model: AppModel, openWindow: OpenWindowAction, openSettings: OpenSettingsAction) {
         let env = ProcessInfo.processInfo.environment
         guard let dir = env["APP_SNAPSHOT"], !dir.isEmpty else { return }
         // Snapshots never run against the real database.
@@ -23,6 +29,7 @@ enum Snapshot {
             return
         }
         let only = env["APP_SNAPSHOT_PAGES"].map { Set($0.split(separator: ",").map(String.init)) }
+        func wants(_ group: String) -> Bool { only == nil || only!.contains(group) }
         Task {
             // A sleeping display gives screencapture nothing. Declaring user
             // activity wakes it; the assertion keeps it on until the run quits.
@@ -32,20 +39,44 @@ enum Snapshot {
             IOPMAssertionCreateWithName(kIOPMAssertionTypePreventUserIdleDisplaySleep as CFString,
                                         IOPMAssertionLevel(kIOPMAssertionLevelOn), "Snapshots" as CFString, &awake)
             try? FileManager.default.createDirectory(atPath: dir, withIntermediateDirectories: true)
-            try? await Task.sleep(for: .seconds(1.5))
-            for mode in ["light", "dark"] {
-                NSApp.appearance = NSAppearance(named: mode == "light" ? .aqua : .darkAqua)
-                for page in SidebarItem.allCases where only?.contains(page.rawValue) ?? true {
-                    model.sidebar = page
-                    try? await Task.sleep(for: .seconds(0.8))
-                    capture(to: "\(dir)/\(page.rawValue)-\(mode).png")
+            try? await Task.sleep(for: .seconds(1))
+
+            if wants("menubar") { MenuBarSnapshot.render(to: dir) }
+            if wants("kit") { KitGallery.render(to: dir) }
+
+            if wants("popover") {
+                openWindow(id: PopoverPreview.windowID)
+                try? await Task.sleep(for: .seconds(1))
+                // The real popover has no traffic lights.
+                for kind in [NSWindow.ButtonType.closeButton, .miniaturizeButton, .zoomButton] {
+                    window(titled: PopoverPreview.title)?.standardWindowButton(kind)?.isHidden = true
+                }
+                for mode in ["light", "dark"] {
+                    NSApp.appearance = NSAppearance(named: mode == "light" ? .aqua : .darkAqua)
+                    for (page, fixture) in popoverPages {
+                        model.limits.applyFixture(fixture)
+                        try? await Task.sleep(for: .seconds(0.8))
+                        capture(to: "\(dir)/\(page)-\(mode).png", window: window(titled: PopoverPreview.title))
+                    }
+                }
+                model.limits.applyFixture("normal")
+                window(titled: PopoverPreview.title)?.close()
+            }
+
+            if wants("dashboard") {
+                openWindow(id: Dashboard.windowID)
+                try? await Task.sleep(for: .seconds(1.5))
+                for mode in ["light", "dark"] {
+                    NSApp.appearance = NSAppearance(named: mode == "light" ? .aqua : .darkAqua)
+                    for page in SidebarItem.allCases {
+                        model.sidebar = page
+                        try? await Task.sleep(for: .seconds(0.8))
+                        capture(to: "\(dir)/\(page.rawValue)-\(mode).png", window: window(titled: Dashboard.title))
+                    }
                 }
             }
-            if only == nil || only?.contains("kit") == true {
-                KitGallery.render(to: dir)
-            }
-            if only == nil || only?.contains("settings") == true {
-                let main = NSApp.windows.first { $0.canBecomeMain && !$0.isSheet }
+
+            if wants("settings") {
                 openSettings()
                 try? await Task.sleep(for: .seconds(1))
                 for mode in ["light", "dark"] {
@@ -53,7 +84,10 @@ enum Snapshot {
                     for tab in SettingsTab.allCases {
                         model.settingsTab = tab
                         try? await Task.sleep(for: .seconds(0.8))
-                        let settings = NSApp.windows.first { $0.isVisible && $0 !== main && !$0.isSheet }
+                        let settings = NSApp.windows.first {
+                            $0.isVisible && $0.title != Dashboard.title && $0.title != PopoverPreview.title
+                                && $0.styleMask.contains(.titled) && !$0.isSheet
+                        }
                         capture(to: "\(dir)/settings-\(tab.rawValue)-\(mode).png", window: settings)
                     }
                 }
@@ -63,6 +97,10 @@ enum Snapshot {
             for window in NSApp.windows { if let sheet = window.attachedSheet { window.endSheet(sheet) } }
             NSApp.terminate(nil)
         }
+    }
+
+    private static func window(titled title: String) -> NSWindow? {
+        NSApp.windows.first { $0.isVisible && $0.title == title }
     }
 
     /// Captures the real window with screencapture, so glass, sidebars, and
