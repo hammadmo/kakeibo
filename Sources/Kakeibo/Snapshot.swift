@@ -74,6 +74,9 @@ enum Snapshot {
         }
         // Active, like a window someone is using: real accent colors and focus rings.
         NSApp.activate()
+        // Stage Manager shrinks a normal-level window of a background app into a
+        // tilted strip thumbnail; a floating window stays full size on stage.
+        window.level = .floating
         window.makeKeyAndOrderFront(nil)
         let size = window.contentView?.bounds.size ?? .zero
         GridProbes.shared.write(to: path.replacingOccurrences(of: ".png", with: "-layout.json"), window: size)

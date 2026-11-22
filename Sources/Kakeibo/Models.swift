@@ -1,38 +1,46 @@
 import Foundation
 import SwiftData
-import KakeiboKit
 
+/// One reading of the plan limits (docs/BRIEF.md: LimitSnapshot).
+/// Fable is optional: a plan without a Fable limit hides that Gauge.
 @Model
-final class Item {
-    var title: String
-    var notes: String = ""
-    var isStarred: Bool = false
-    var createdAt: Date = Date.now
-    /// A stable id for links, sync, and the agent CLI.
-    var uuid: UUID = UUID()
+final class LimitSnapshot {
+    var takenAt: Date = Date.now
+    var sessionUsed: Double
+    var sessionResets: Date
+    var weeklyUsed: Double
+    var weeklyResets: Date
+    var fableUsed: Double?
+    var fableResets: Date?
 
-    init(title: String) {
-        self.title = title
+    init(sessionUsed: Double, sessionResets: Date, weeklyUsed: Double, weeklyResets: Date,
+         fableUsed: Double? = nil, fableResets: Date? = nil) {
+        self.sessionUsed = sessionUsed
+        self.sessionResets = sessionResets
+        self.weeklyUsed = weeklyUsed
+        self.weeklyResets = weeklyResets
+        self.fableUsed = fableUsed
+        self.fableResets = fableResets
     }
 }
 
-/// The sidebar pages. Snapshot mode walks through every case.
+/// The Dashboard pages. Snapshot mode walks through every case.
 enum SidebarItem: String, CaseIterable, Identifiable {
-    case all, starred
+    case overview, projects
 
     var id: String { rawValue }
 
     var title: String {
         switch self {
-        case .all: "All Items"
-        case .starred: "Starred"
+        case .overview: "Overview"
+        case .projects: "Projects"
         }
     }
 
     var symbol: String {
         switch self {
-        case .all: "tray"
-        case .starred: "star"
+        case .overview: "gauge.with.dots.needle.33percent"
+        case .projects: "folder"
         }
     }
 }
@@ -41,8 +49,7 @@ enum SidebarItem: String, CaseIterable, Identifiable {
 @Observable
 final class AppModel {
     let container: ModelContainer
-    var sidebar: SidebarItem? = .all
-    var selection: PersistentIdentifier?
+    var sidebar: SidebarItem? = .overview
     /// Settings reopens on the last tab. Test and snapshot runs leave it alone.
     var settingsTab: SettingsTab = SettingsTab(rawValue: UserDefaults.standard.string(forKey: "settings.tab") ?? "") ?? .general {
         didSet { if !Store.isOverridden { UserDefaults.standard.set(settingsTab.rawValue, forKey: "settings.tab") } }
@@ -50,12 +57,5 @@ final class AppModel {
 
     init(container: ModelContainer) {
         self.container = container
-    }
-
-    func addItem(title: String = "") {
-        let item = Item(title: ItemTitle.clean(title))
-        if sidebar == .starred { item.isStarred = true }
-        container.mainContext.insert(item)
-        selection = item.id
     }
 }

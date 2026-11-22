@@ -26,21 +26,21 @@ enum SelfTest {
         Task {
             try? await Task.sleep(for: .seconds(0.5))
             let context = model.container.mainContext
-            func items() -> [Item] { (try? context.fetch(FetchDescriptor<Item>())) ?? [] }
+            func snapshots() -> [LimitSnapshot] { (try? context.fetch(FetchDescriptor<LimitSnapshot>())) ?? [] }
 
-            let before = items().count
-            model.addItem()
-            check("New Item adds one item", items().count == before + 1)
-            check("the new item is selected", model.selection != nil)
+            let before = snapshots().count
+            let reading = LimitSnapshot(sessionUsed: 42, sessionResets: .now, weeklyUsed: 18, weeklyResets: .now)
+            context.insert(reading)
+            try? context.save()
+            check("a limit reading is stored", snapshots().count == before + 1)
+            check("a plan without Fable stores no Fable reading", reading.fableUsed == nil)
+            context.delete(reading)
+            try? context.save()
+            check("deleting the reading removes it", snapshots().count == before)
 
-            if let item = items().first(where: { $0.id == model.selection }) {
-                item.isStarred.toggle()
-                check("starring an item marks it starred", item.isStarred)
-                context.delete(item)
-                try? context.save()
-                check("deleting the item removes it", items().count == before)
-            }
-            check("titles are cleaned", ItemTitle.clean("  Buy   milk ") == "Buy milk")
+            model.sidebar = .projects
+            check("the Projects page opens", model.sidebar == .projects)
+            check("92% is almost reached", Used(92).isAlmostReached)
 
             print(failures == 0 ? "SELFTEST PASS \(count) checks" : "SELFTEST FAIL \(failures) of \(count) checks")
             finish(code: failures == 0 ? 0 : 1)

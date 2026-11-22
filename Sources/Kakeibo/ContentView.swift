@@ -1,6 +1,8 @@
 import SwiftData
 import SwiftUI
+import KakeiboKit
 
+/// The Dashboard window. The menu bar item and popover come with S-004 and S-005.
 struct ContentView: View {
     @Environment(AppModel.self) private var model
     @Environment(\.openSettings) private var openSettings
@@ -8,11 +10,11 @@ struct ContentView: View {
     var body: some View {
         NavigationSplitView {
             sidebar
-        } content: {
-            ItemList(page: model.sidebar ?? .all)
-                .navigationSplitViewColumnWidth(min: 260, ideal: 320)
         } detail: {
-            ItemDetail()
+            switch model.sidebar ?? .overview {
+            case .overview: OverviewPage()
+            case .projects: ProjectsPage()
+            }
         }
         .task {
             SeedData.insertIfRequested(into: model)
@@ -31,61 +33,47 @@ struct ContentView: View {
     }
 }
 
-struct ItemList: View {
-    @Environment(AppModel.self) private var model
-    @Environment(\.modelContext) private var context
-    @Query(sort: \Item.createdAt, order: .reverse) private var items: [Item]
-    let page: SidebarItem
-
-    private var visible: [Item] {
-        page == .starred ? items.filter(\.isStarred) : items
-    }
+/// Stored limit readings, newest first. Charts replace this list in M2.
+struct OverviewPage: View {
+    @Query(sort: \LimitSnapshot.takenAt, order: .reverse) private var snapshots: [LimitSnapshot]
 
     var body: some View {
-        @Bindable var model = model
-        List(visible, selection: $model.selection) { item in
-            Label(item.title, systemImage: item.isStarred ? "star.fill" : "circle")
-                .tag(item.id)
-                .contextMenu {
-                    Button("Delete", role: .destructive) { context.delete(item) }
-                }
+        List(snapshots) { snapshot in
+            HStack {
+                Text(snapshot.takenAt, format: .dateTime.day().month().hour().minute())
+                    .foregroundStyle(.secondary)
+                Spacer()
+                reading("Session", snapshot.sessionUsed)
+                reading("Weekly", snapshot.weeklyUsed)
+                if let fable = snapshot.fableUsed { reading("Fable", fable) } else { Color.clear.frame(width: 112) }
+            }
+            .monospacedDigit()
         }
         .overlay {
-            if visible.isEmpty {
+            if snapshots.isEmpty {
                 ContentUnavailableView(
-                    "No Items",
-                    systemImage: page.symbol,
-                    description: Text("Press Command-N to add one.")
+                    "No Limits Yet",
+                    systemImage: SidebarItem.overview.symbol,
+                    description: Text("Kakeibo shows your Session, Weekly, and Fable limits here.")
                 )
             }
         }
-        .navigationTitle(page.title)
-        .toolbar {
-            ToolbarItem {
-                Button("New Item", systemImage: "plus") { model.addItem() }
-                    .help("Add an item (Command-N)")
-            }
-        }
+        .navigationTitle(SidebarItem.overview.title)
+    }
+
+    private func reading(_ name: String, _ value: Double) -> some View {
+        Text("\(name) \(Used(value).label)")
+            .frame(width: 112, alignment: .trailing)
     }
 }
 
-struct ItemDetail: View {
-    @Environment(AppModel.self) private var model
-    @Query private var items: [Item]
-
+struct ProjectsPage: View {
     var body: some View {
-        if let item = items.first(where: { $0.id == model.selection }) {
-            @Bindable var item = item
-            Form {
-                TextField("Title", text: $item.title)
-                Toggle("Starred", isOn: $item.isStarred)
-                TextField("Notes", text: $item.notes, axis: .vertical)
-                    .lineLimit(4...)
-            }
-            .formStyle(.grouped)
-            } else {
-            ContentUnavailableView("No Selection", systemImage: "sidebar.right")
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                }
+        ContentUnavailableView(
+            "No Projects Yet",
+            systemImage: SidebarItem.projects.symbol,
+            description: Text("Kakeibo reads the logs in ~/.claude/projects.")
+        )
+        .navigationTitle(SidebarItem.projects.title)
     }
 }

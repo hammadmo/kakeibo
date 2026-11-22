@@ -30,10 +30,7 @@ struct KakeiboApp: App {
         .commands {
             SidebarCommands()
             ToolbarCommands()
-            CommandGroup(replacing: .newItem) {
-                Button("New Item") { model.addItem() }
-                    .keyboardShortcut("n")
-            }
+            CommandGroup(replacing: .newItem) {}
         }
 
         Settings {
@@ -78,7 +75,7 @@ enum Store {
 
     static func makeContainer() -> ModelContainer {
         do {
-            return try ModelContainer(for: Item.self, configurations: ModelConfiguration(url: url))
+            return try ModelContainer(for: LimitSnapshot.self, configurations: ModelConfiguration(url: url))
         } catch {
             fatalError("Could not open the database at \(url.path): \(error)")
         }
