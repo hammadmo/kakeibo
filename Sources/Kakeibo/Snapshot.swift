@@ -10,6 +10,7 @@ import SwiftUI
 /// APP_SNAPSHOT_PAGES=menubar,kit,popover,dashboard,settings picks groups.
 /// Add APP_ACCENT=<id> to see the pages in another accent.
 enum Snapshot {
+    nonisolated(unsafe) private static var activity: NSObjectProtocol?
     /// True during a snapshot run, so parts don't pick up a hover from the pointer.
     nonisolated static let isRunning = !(ProcessInfo.processInfo.environment["APP_SNAPSHOT"] ?? "").isEmpty
 
@@ -30,6 +31,8 @@ enum Snapshot {
         }
         let only = env["APP_SNAPSHOT_PAGES"].map { Set($0.split(separator: ",").map(String.init)) }
         func wants(_ group: String) -> Bool { only == nil || only!.contains(group) }
+        // App Nap stretches a background app's sleeps from seconds to minutes.
+        activity = ProcessInfo.processInfo.beginActivity(options: [.userInitiated, .latencyCritical], reason: "Snapshots")
         Task {
             // A sleeping display gives screencapture nothing. Declaring user
             // activity wakes it; the assertion keeps it on until the run quits.

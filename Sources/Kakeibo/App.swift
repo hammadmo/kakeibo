@@ -38,7 +38,9 @@ struct KakeiboApp: App {
         .modelContainer(model.container)
         .defaultSize(width: 1100, height: 720)
         .windowToolbarStyle(.unified)
-        .defaultLaunchBehavior(.suppressed)
+        // Test runs open it, so they start even if the menu bar has no room
+        // for the item (its label never draws, so its task never runs).
+        .defaultLaunchBehavior(Store.isOverridden ? .presented : .suppressed)
         .commands {
             SidebarCommands()
             ToolbarCommands()
