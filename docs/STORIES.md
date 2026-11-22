@@ -14,10 +14,10 @@ Seed data (snapshot mode): fixture JSONL logs for 4 projects × 30 days, 3 model
 As the user, I see Kakeibo in the same lacquered look as Hachibu and Jubako.
 Screens: kit-gallery-light.png, kit-gallery-dark.png
 Acceptance:
-- [unit] `Ink` tokens match Hachibu's `design/KIT.md` hex values in light and dark.
+- [unit] `Ink` tokens match Hachibu's `design/KIT.md` hex values in light and dark. (Tokens.swift is copied verbatim from Hachibu.)
 - [snap] The gallery shows the Gauge at 0, 42, 63, 92, and 100%, the 家 Seal, the raised card, and the primary and secondary buttons, in light and dark.
 - [snap] At 92% the Gauge ring uses `warning` and the Seal shows.
-Status: todo
+Status: done
 UX:
 - Surface: none; parts only.
 - Access: the Gauge's accessibility value reads "Session limit, 42% used, resets in 2 hours 14 minutes"; the warning adds the word "Almost reached", not only a color.

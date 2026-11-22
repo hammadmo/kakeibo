@@ -10,6 +10,9 @@ import SwiftUI
 /// APP_SNAPSHOT_PAGES=all,starred limits the pages. Add "settings" to include Settings.
 /// Add APP_ACCENT=<id> to see the pages in another accent.
 enum Snapshot {
+    /// True during a snapshot run, so parts don't pick up a hover from the pointer.
+    nonisolated static let isRunning = !(ProcessInfo.processInfo.environment["APP_SNAPSHOT"] ?? "").isEmpty
+
     static func runIfRequested(model: AppModel, openSettings: OpenSettingsAction) {
         let env = ProcessInfo.processInfo.environment
         guard let dir = env["APP_SNAPSHOT"], !dir.isEmpty else { return }
@@ -37,6 +40,9 @@ enum Snapshot {
                     try? await Task.sleep(for: .seconds(0.8))
                     capture(to: "\(dir)/\(page.rawValue)-\(mode).png")
                 }
+            }
+            if only == nil || only?.contains("kit") == true {
+                KitGallery.render(to: dir)
             }
             if only == nil || only?.contains("settings") == true {
                 let main = NSApp.windows.first { $0.canBecomeMain && !$0.isSheet }
