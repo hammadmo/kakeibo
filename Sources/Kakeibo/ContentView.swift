@@ -19,6 +19,8 @@ struct ContentView: View {
         .task {
             SeedData.insertIfRequested(into: model)
             SelfTest.runIfRequested(model: model)
+            LimitsProbe.runIfRequested(model: model)
+            if !SelfTest.requested && !LimitsProbe.requested { model.limits.start() }
             Snapshot.runIfRequested(model: model, openSettings: openSettings)
         }
     }

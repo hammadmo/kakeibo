@@ -42,7 +42,8 @@ Acceptance:
 - [unit] Reads the OAuth token from Claude Code's Keychain item, never writes or logs it, and sends it only to Anthropic.
 - [unit] No token → state `signedOut`; HTTP error or no network → state `offline` with the last snapshot.
 - [self] Fetches at launch and every 5 minutes, and never more than once a minute.
-Status: todo
+Status: done
+Note: the live response is not checked yet. The terminal `claude` login on this Mac has ended (`loginEnded: time_limit`), so Kakeibo shows "signed out". After `claude` → `/login`, run `Kakeibo --probe-limits` to confirm the window keys (`five_hour`, `seven_day`, `seven_day_*fable*`).
 UX:
 - States: signed out "Sign in to Claude Code to see your limits." with button "Open Terminal"; offline "Showing limits from 14:02. Unable to reach Anthropic." under the Gauges.
 

@@ -9,6 +9,8 @@ import SwiftUI
 //   APP_SEED=1 Kakeibo           fill an empty /tmp store with sample items (tools/snap.sh)
 //   Kakeibo --selftest           run the self-test on a /tmp store and quit with 0 or 1 (tools/selftest.sh)
 //   APP_ACCENT=<id> Kakeibo      run with another accent from Theme.all (UI/Theme.swift)
+//   Kakeibo --probe-limits       fetch the real limits once, print window keys and Used %, quit
+//   APP_LIMITS=<fixture> Kakeibo use fixture limits: normal, warning, signedout, offline, empty
 //   APP_GRID=1 Kakeibo           draw the 8 pt grid and the layout probes over the window
 
 @main

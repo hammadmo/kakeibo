@@ -55,7 +55,10 @@ final class AppModel {
         didSet { if !Store.isOverridden { UserDefaults.standard.set(settingsTab.rawValue, forKey: "settings.tab") } }
     }
 
+    let limits: LimitsService
+
     init(container: ModelContainer) {
         self.container = container
+        self.limits = LimitsService(container: container)
     }
 }

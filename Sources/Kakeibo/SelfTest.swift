@@ -42,6 +42,13 @@ enum SelfTest {
             check("the Projects page opens", model.sidebar == .projects)
             check("92% is almost reached", Used(92).isAlmostReached)
 
+            // S-003: fixture limits, and no second fetch within a minute.
+            let fetched = await model.limits.fetch(force: true)
+            check("limits load", fetched && model.limits.status == .ok && model.limits.current?.session?.used == 42)
+            check("Fable limit is read", model.limits.current?.fable?.used == 63)
+            let again = await model.limits.fetch()
+            check("a second fetch within a minute is skipped", !again)
+
             print(failures == 0 ? "SELFTEST PASS \(count) checks" : "SELFTEST FAIL \(failures) of \(count) checks")
             finish(code: failures == 0 ? 0 : 1)
         }

@@ -13,11 +13,14 @@ scratch="$HOME/Library/Developer/$name/build"
 config=release
 [[ " $* " == *" --debug "* ]] && config=debug
 
-# Sign with your Apple Development certificate when you have one (Xcode >
-# Settings > Accounts). Otherwise sign ad hoc, which is fine for your own Mac.
+# Sign with Developer ID when there is one, like Hachibu: a stable signature
+# keeps the Keychain "Always Allow" for Claude Code's login across rebuilds,
+# and it can be notarized later. Then Apple Development, then ad hoc.
 identity="${SIGN_IDENTITY:-}"
 if [[ -z "$identity" ]]; then
-  identity=$(security find-identity -v -p codesigning 2>/dev/null | grep -m1 -o '"Apple Development: [^"]*"' | tr -d '"' || true)
+  ids=$(security find-identity -v -p codesigning 2>/dev/null || true)
+  identity=$(print -r -- "$ids" | grep -m1 -o '"Developer ID Application: [^"]*"' | tr -d '"' || true)
+  [[ -n "$identity" ]] || identity=$(print -r -- "$ids" | grep -m1 -o '"Apple Development: [^"]*"' | tr -d '"' || true)
 fi
 [[ -n "$identity" ]] || identity=-
 
@@ -47,7 +50,9 @@ if [[ -d "$here/Icon/AppIcon.icon" ]]; then
   cp -X "$car" "$here/Resources/AppIcon.icns" "$app/Contents/Resources/"
 fi
 xattr -cr "$app"
-codesign --force --sign "$identity" "$app" 2>&1 | grep -v "replacing existing signature" || true
+signing=(codesign --force --sign "$identity")
+[[ "$identity" == "Developer ID"* ]] && signing+=(--options runtime --timestamp)
+"${signing[@]}" "$app" 2>&1 | grep -v "replacing existing signature" || true
 echo "installed $app (signed: ${identity})"
 
 if [[ " $* " == *" --open "* ]]; then
