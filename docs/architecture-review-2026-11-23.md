@@ -5,7 +5,7 @@ no drifted `private struct` copies. Two fix-log entries, both in snapshot toolin
 Parsing and pricing live in `KakeiboKit` with unit tests; app types are `@MainActor`
 and do their slow work in the `UsageStore` actor.
 
-## Two design systems side by side  [Worth exploring]
+## Two design systems side by side  [Done 2026-11-23, approved by the user]
 
 Files: Sources/Kakeibo/UI/Theme.swift (144), UI/AppearanceSettings.swift (165), DesignKit/*, CLAUDE.md
 Signal: a page lives far from its feature; rules contradict the brief.

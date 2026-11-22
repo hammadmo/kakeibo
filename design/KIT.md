@@ -14,3 +14,7 @@ Differences from Hachibu:
 - Cards follow Jubako's raised lacquer grid: `kitCard()`.
 
 Gallery: `APP_SNAPSHOT_PAGES=kit tools/snap.sh` writes `kit-gallery-light.png` and `kit-gallery-dark.png`.
+
+Windows: the Dashboard (width 760) and Settings (width 520) use Hachibu's `kitWindow` frame
+(`KitWindow.swift`, `Motifs.swift`: wave band and plum sprig) and `KitTabBar` (`Controls.swift`).
+The template's accent picker was removed on 2026-11-23.

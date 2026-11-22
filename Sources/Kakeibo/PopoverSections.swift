@@ -104,7 +104,6 @@ private struct ProjectRowView: View {
 struct PopoverFooter: View {
     @Environment(AppModel.self) private var model
     @Environment(\.openWindow) private var openWindow
-    @Environment(\.openSettings) private var openSettings
     @State private var refreshing = false
 
     var body: some View {
@@ -138,7 +137,7 @@ struct PopoverFooter: View {
                 Button("Dashboard…") { Dashboard.open(openWindow) }
                     .keyboardShortcut("d")
                     .help("Open the Dashboard (⌘D)")
-                Button("Settings…") { NSApp.activate(); openSettings() }
+                Button("Settings…") { openWindow(id: SettingsView.windowID); NSApp.activate() }
                     .keyboardShortcut(",")
                 Spacer()
                 Button("Quit Kakeibo") { NSApp.terminate(nil) }

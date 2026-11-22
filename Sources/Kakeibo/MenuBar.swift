@@ -8,7 +8,6 @@ import SwiftUI
 struct MenuBarLabel: View {
     @Environment(AppModel.self) private var model
     @Environment(\.openWindow) private var openWindow
-    @Environment(\.openSettings) private var openSettings
 
     var body: some View {
         let session = model.limits.current?.session
@@ -17,7 +16,7 @@ struct MenuBarLabel: View {
             // Only the label reaches VoiceOver for a menu bar item, so the value goes in it.
             .accessibilityLabel(MenuBarGlyph.spoken(session))
             .help(MenuBarGlyph.tooltip(session))
-            .task { Startup.run(model: model, openWindow: openWindow, openSettings: openSettings) }
+            .task { Startup.run(model: model, openWindow: openWindow) }
     }
 }
 
@@ -90,7 +89,7 @@ enum MenuBarGlyph {
 enum Startup {
     private static var started = false
 
-    static func run(model: AppModel, openWindow: OpenWindowAction, openSettings: OpenSettingsAction) {
+    static func run(model: AppModel, openWindow: OpenWindowAction) {
         guard !started else { return }
         started = true
         SeedData.insertIfRequested(into: model)
@@ -98,6 +97,6 @@ enum Startup {
         SelfTest.runIfRequested(model: model)
         LimitsProbe.runIfRequested(model: model)
         if !SelfTest.requested && !LimitsProbe.requested { model.start() }
-        Snapshot.runIfRequested(model: model, openWindow: openWindow, openSettings: openSettings)
+        Snapshot.runIfRequested(model: model, openWindow: openWindow)
     }
 }

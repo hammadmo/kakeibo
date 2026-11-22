@@ -10,3 +10,10 @@ extension View {
             .overlay(shape.strokeBorder(Ink.hairline, lineWidth: Metric.hairline))
     }
 }
+
+/// A hairline between groups.
+struct KitDivider: View {
+    var body: some View {
+        Rectangle().fill(Ink.hairline).frame(height: Metric.hairline)
+    }
+}

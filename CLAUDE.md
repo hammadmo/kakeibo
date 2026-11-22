@@ -28,16 +28,13 @@ SwiftData database and no server.
 ## Design rules
 
 - Kakeibo has its own look: Hachibu's design kit in `DesignKit/` (spec: `design/KIT.md`). The popover and menu bar read only `Ink`, `KitType`, `Metric`, `Motion`, and `kitCard()`. Never hard-code colors, radii, or durations in views.
-- The template's accent picker (`UI/Theme.swift`, Settings > Appearance) still exists and styles the Dashboard and Settings; see `docs/architecture-review-2026-11-23.md` before adding to it.
-- Compare accents: add `APP_ACCENT=<id>` to the snapshot command.
+- Every window uses the kit too: `.kitWindow(width:)` under `.windowStyle(.hiddenTitleBar)`, `KitTabBar` for pages and tabs, `SettingsSection`/`SettingsRow` for settings, `kitCard()` for Dashboard cards. Settings is a plain `Window` (id `settings`), not a Settings scene. There is no accent picker.
 - Spacing comes from `Space` in `UI/Grid.swift`, on a 4 pt grid. Mark custom pages and cards with `.gridArea` and `.gridProbe`.
 - Windows open calm: `.noInitialFocus()` on every window and sheet (no focus ring or selected text on open), `.fitsContent()` on sheets and Settings tabs (no scroll bar with nothing to scroll). System scroll bars. Both in `UI/WindowBehavior.swift`.
-- Settings: one tab per topic in `SettingsView.swift`, one grouped Form per tab. Add a case to `SettingsTab` for a new tab.
-- Window chrome (title bar, toolbar, sidebar, menus, sheets) stays system. Buttons use system styles, like `.borderedProminent`.
-- Colors: `.primary`, `.secondary`, `.tint`, and system colors. Never fixed grays or white for text.
+- Settings: one tab per topic in `SettingsView.swift`; add a case to `SettingsTab`.
+- Colors come only from `Ink`. Empty states use `KitEmptyState`. Traffic lights, menus, and alerts stay system.
 - Every action has a menu bar item and a keyboard shortcut.
 - `Label` for icon and text pairs. SF Symbols for icons.
-- `ContentUnavailableView` for empty states.
 - Liquid Glass belongs to floating controls only, never to content.
 
 ## Skills

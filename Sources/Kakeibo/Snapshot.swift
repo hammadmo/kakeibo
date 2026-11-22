@@ -20,7 +20,7 @@ enum Snapshot {
         ("popover-offline", "offline"), ("popover-empty", "empty"),
     ]
 
-    static func runIfRequested(model: AppModel, openWindow: OpenWindowAction, openSettings: OpenSettingsAction) {
+    static func runIfRequested(model: AppModel, openWindow: OpenWindowAction) {
         let env = ProcessInfo.processInfo.environment
         guard let dir = env["APP_SNAPSHOT"], !dir.isEmpty else { return }
         // Snapshots never run against the real database.
@@ -80,7 +80,7 @@ enum Snapshot {
             }
 
             if wants("settings") {
-                openSettings()
+                openWindow(id: SettingsView.windowID)
                 try? await Task.sleep(for: .seconds(1))
                 for mode in ["light", "dark"] {
                     NSApp.appearance = NSAppearance(named: mode == "light" ? .aqua : .darkAqua)
@@ -105,7 +105,7 @@ enum Snapshot {
     }
 
     private static var settingsWindow: NSWindow? {
-        NSApp.windows.first { $0.isVisible && ($0.identifier?.rawValue.contains("Settings") ?? false) }
+        window(id: SettingsView.windowID)
     }
 
     /// Captures the real window with screencapture, so glass, sidebars, and

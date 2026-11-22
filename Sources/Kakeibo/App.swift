@@ -8,7 +8,6 @@ import SwiftUI
 //   APP_SNAPSHOT=<dir> Kakeibo   save a PNG of every sidebar page and Settings tab in light and dark mode, then quit
 //   APP_SEED=1 Kakeibo           fill an empty /tmp store with sample items (tools/snap.sh)
 //   Kakeibo --selftest           run the self-test on a /tmp store and quit with 0 or 1 (tools/selftest.sh)
-//   APP_ACCENT=<id> Kakeibo      run with another accent from Theme.all (UI/Theme.swift)
 //   Kakeibo --probe-limits       fetch the real limits once, print window keys and Used %, quit
 //   APP_LIMITS=<fixture> Kakeibo use fixture limits: normal, warning, signedout, offline, empty
 //   APP_GRID=1 Kakeibo           draw the 8 pt grid and the layout probes over the window
@@ -31,20 +30,17 @@ struct KakeiboApp: App {
         Window(Dashboard.title, id: Dashboard.windowID) {
             ContentView()
                 .environment(model)
-                .themed()
                 .overlay { if GridOverlay.enabled { GridOverlay() } }
-                .frame(minWidth: 760, minHeight: 480)
         }
         .modelContainer(model.container)
-        .defaultSize(width: 1100, height: 720)
-        .windowToolbarStyle(.unified)
+        .windowStyle(.hiddenTitleBar)
+        .windowResizability(.contentSize)
         // Test runs open it, so they start even if the menu bar has no room
         // for the item (its label never draws, so its task never runs).
         .defaultLaunchBehavior(Store.isOverridden ? .presented : .suppressed)
         .commands {
-            SidebarCommands()
-            ToolbarCommands()
             CommandGroup(replacing: .newItem) {}
+            CommandGroup(replacing: .appSettings) { SettingsCommand() }
         }
 
         // Opens only in snapshot runs: the popover in a plain window, so it can be captured.
@@ -58,12 +54,27 @@ struct KakeiboApp: App {
         .restorationBehavior(.disabled)
         .defaultLaunchBehavior(.suppressed)
 
-        Settings {
+        // A plain window, not a Settings scene: SwiftUI gives a Settings scene
+        // a system title bar that cannot be hidden.
+        Window("Kakeibo Settings", id: SettingsView.windowID) {
             SettingsView()
                 .environment(model)
-                .themed()
+                .overlay { if GridOverlay.enabled { GridOverlay() } }
         }
+        .windowStyle(.hiddenTitleBar)
         .windowResizability(.contentSize)
+        .restorationBehavior(.disabled)
+        .defaultLaunchBehavior(.suppressed)
+    }
+}
+
+/// Settings… (Command-Comma) opens the kit Settings window.
+struct SettingsCommand: View {
+    @Environment(\.openWindow) private var openWindow
+
+    var body: some View {
+        Button("Settings…") { openWindow(id: SettingsView.windowID); NSApp.activate() }
+            .keyboardShortcut(",")
     }
 }
 

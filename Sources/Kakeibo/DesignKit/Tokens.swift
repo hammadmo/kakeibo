@@ -122,6 +122,7 @@ enum Metric {
     static let iconSize: CGFloat = 14
     static let settingsWidth: CGFloat = 520
     static let historyWidth: CGFloat = 760
+    static let dashboardWidth: CGFloat = 760
     static let historyEmptyHeight: CGFloat = 320
     static let chartHeight: CGFloat = 120
     static let chartDot: CGFloat = 3
