@@ -29,3 +29,22 @@ import Testing
     #expect(ResetText.short(now.addingTimeInterval(38 * 60), now: now) == "Resets in 38 m")
     #expect(ResetText.spoken(now.addingTimeInterval(2 * 3600 + 14 * 60), now: now) == "resets in 2 hours 14 minutes")
 }
+
+@Test func readsTheLimitsArray() throws {
+    // The live shape on 2026-11-23 (values changed).
+    let json = """
+    {"five_hour":{"utilization":11.0,"resets_at":"2026-11-23T04:20:00.814358+00:00"},
+     "seven_day":{"utilization":57.0,"resets_at":"2026-11-27T06:00:00.814377+00:00"},
+     "seven_day_opus":null,"seven_day_sonnet":null,
+     "limits":[
+      {"group":"session","kind":"session","percent":12,"resets_at":"2026-11-23T04:20:00.814358+00:00","scope":null},
+      {"group":"weekly","kind":"weekly_all","percent":57,"resets_at":"2026-11-27T06:00:00.814377+00:00","scope":null},
+      {"group":"weekly","kind":"weekly_scoped","percent":69,"resets_at":"2026-11-27T05:59:59.814510+00:00",
+       "scope":{"model":{"display_name":"Fable","id":null},"surface":null}}]}
+    """
+    let limits = try Limits.decode(Data(json.utf8))
+    #expect(limits.session?.used == 12)
+    #expect(limits.weekly?.used == 57)
+    #expect(limits.fable?.used == 69)
+    #expect(limits.fable?.resets != nil)
+}

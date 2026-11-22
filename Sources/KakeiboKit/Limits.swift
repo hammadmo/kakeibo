@@ -27,9 +27,11 @@ public struct Limits: Equatable, Sendable {
     }
 
     /// Decodes the OAuth usage response Claude Code's `/usage` reads. The
-    /// endpoint is not documented, so any top-level `{utilization, resets_at}`
-    /// object counts as a window: `five_hour` is the Session limit,
-    /// `seven_day` the Weekly limit, and a `seven_day_*fable*` key the Fable limit.
+    /// endpoint is not documented. Its `limits` array is read first:
+    /// `kind` "session" is the Session limit, "weekly_all" the Weekly limit,
+    /// and a "weekly_scoped" limit whose model is named Fable the Fable limit.
+    /// Older responses only have `five_hour` and `seven_day` objects with
+    /// `utilization` and `resets_at`; those are the fallback.
     public static func decode(_ data: Data) throws -> Limits {
         guard let object = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
             throw DecodingError.dataCorrupted(.init(codingPath: [], debugDescription: "not an object"))
@@ -40,12 +42,25 @@ public struct Limits: Equatable, Sendable {
                   let used = (window["utilization"] as? NSNumber)?.doubleValue else { continue }
             windows[key] = LimitWindow(used: used, resets: (window["resets_at"] as? String).flatMap(parseDate))
         }
-        return Limits(
-            session: windows["five_hour"],
-            weekly: windows["seven_day"],
-            fable: windows.first { $0.key.hasPrefix("seven_day") && $0.key.contains("fable") }?.value,
-            keys: windows.keys.sorted()
-        )
+        var limits = Limits(session: windows["five_hour"], weekly: windows["seven_day"],
+                            fable: windows.first { $0.key.hasPrefix("seven_day") && $0.key.contains("fable") }?.value)
+        var keys = windows.keys.sorted()
+
+        for entry in object["limits"] as? [[String: Any]] ?? [] {
+            guard let kind = entry["kind"] as? String,
+                  let used = (entry["percent"] as? NSNumber)?.doubleValue else { continue }
+            let window = LimitWindow(used: used, resets: (entry["resets_at"] as? String).flatMap(parseDate))
+            let model = ((entry["scope"] as? [String: Any])?["model"] as? [String: Any])?["display_name"] as? String
+            keys.append(model.map { "limits.\(kind)(\($0))" } ?? "limits.\(kind)")
+            switch kind {
+            case "session": limits.session = window
+            case "weekly_all": limits.weekly = window
+            case "weekly_scoped" where model?.localizedCaseInsensitiveContains("fable") == true: limits.fable = window
+            default: break
+            }
+        }
+        limits.keys = keys
+        return limits
     }
 
     static func parseDate(_ text: String) -> Date? {

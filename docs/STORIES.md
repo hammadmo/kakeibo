@@ -43,7 +43,7 @@ Acceptance:
 - [unit] No token → state `signedOut`; HTTP error or no network → state `offline` with the last snapshot.
 - [self] Fetches at launch and every 5 minutes, and never more than once a minute.
 Status: done
-Note: the live response is not checked yet. The terminal `claude` login on this Mac has ended (`loginEnded: time_limit`), so Kakeibo shows "signed out". After `claude` → `/login`, run `Kakeibo --probe-limits` to confirm the window keys (`five_hour`, `seven_day`, `seven_day_*fable*`).
+Note: checked live on 2026-11-23 with `--probe-limits`. The response's `limits` array has `session`, `weekly_all`, and a `weekly_scoped` limit for the model "Fable"; `five_hour` and `seven_day` are the fallback.
 UX:
 - States: signed out "Sign in to Claude Code to see your limits." with button "Open Terminal"; offline "Showing limits from 14:02. Unable to reach Anthropic." under the Gauges.
 
@@ -306,6 +306,7 @@ Status: todo
 ---
 
 ## Later
+- Weekly limit by surface: the response's `seven_day_breakdown` splits the Weekly limit into Claude Code, Chats, Cowork, and Other (Claude Code was 93% on 2026-11-23). It could be a Dashboard card in M2.
 - Project cards with sparklines
 - A timeline of today per Project (prompts, files, branch)
 - Live sessions running now
