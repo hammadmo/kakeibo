@@ -78,11 +78,15 @@ final class LimitsService {
         return true
     }
 
+    /// Called with every new reading from Anthropic (the Alerts listen here).
+    var onReading: ((Limits) -> Void)?
+
     private func apply(_ limits: Limits) {
         current = limits
         updatedAt = .now
         status = .ok
         save(limits)
+        onReading?(limits)
     }
 
     // MARK: Storage (S-009)

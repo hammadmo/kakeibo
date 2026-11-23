@@ -249,12 +249,12 @@ Status: done
 
 ### S-030 Alert at 80% and 90%
 As the user, I get an Alert when any limit reaches 80% and again at 90%.
-Screens: settings-dark.png
+Screens: settings-alerts-dark.png
 Depends: S-003
 Acceptance:
 - [unit] Each threshold alerts once per limit per reset period.
 - [manual] The Alert reads "Session limit 90% used · Resets in 38 m".
-Status: todo
+Status: done
 
 ### S-031 Alert when a limit resets
 As the user, I get an Alert when a limit I'd pushed past 80% resets.
@@ -262,7 +262,7 @@ Depends: S-030
 Acceptance:
 - [unit] Fires only if the limit was at 80% or more before the reset.
 - [manual] "Session limit reset. You're back to 0%."
-Status: todo
+Status: done
 
 ### S-032 Get a daily numbers Alert
 As the user, I get one Alert at the end of the day with Tokens, Cost, and the top Project.
@@ -270,16 +270,17 @@ Depends: S-006
 Acceptance:
 - [unit] Fires at the time set in Settings (default 21:00), only on days with activity.
 - [manual] "Today: 1.24 M tokens · $18.40 · mostly Kakeibo".
-Status: todo
+Status: done
 
 ### S-033 Turn each Alert on or off
 As the user, I choose which Alerts Kakeibo sends.
-Screens: settings-light.png, settings-dark.png
+Screens: settings-alerts-light.png, settings-alerts-dark.png
 Depends: S-030, S-031, S-032
 Acceptance:
 - [snap] Settings > Alerts: three toggles and the daily time picker.
-- [self] Notification permission is requested the first time a toggle is turned on, not at launch.
-Status: todo
+- [self] Notification permission is asked when a toggle is turned on or the first Alert is due, never at launch. Test runs record Alerts and never post them.
+- [snap] When notifications are off for Kakeibo, the tab says so with "Open Notifications…".
+Status: done
 
 ---
 

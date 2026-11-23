@@ -19,6 +19,7 @@ struct SettingsView: View {
             Group {
                 switch model.settingsTab {
                 case .general: GeneralSettings()
+                case .alerts: AlertSettings()
                 case .about: AboutSettings()
                 }
             }
@@ -31,20 +32,21 @@ struct SettingsView: View {
 
 /// The Settings tabs. Snapshot mode walks through every case.
 enum SettingsTab: String, CaseIterable, Identifiable {
-    case general, about
+    case general, alerts, about
 
     var id: String { rawValue }
 
     var title: String {
         switch self {
         case .general: "General"
+        case .alerts: "Alerts"
         case .about: "About"
         }
     }
 }
 
-/// Where Kakeibo's numbers come from. The choices in M4 and M5 (Alerts,
-/// menu bar, refresh, login item) join this tab.
+/// Where Kakeibo's numbers come from. The choices in M5 (menu bar,
+/// refresh, login item) join this tab.
 struct GeneralSettings: View {
     @Environment(AppModel.self) private var model
 
@@ -110,5 +112,50 @@ struct AboutSettings: View {
                 .fixedSize(horizontal: false, vertical: true)
         }
         .frame(maxWidth: .infinity)
+    }
+}
+
+/// S-033: which Alerts Kakeibo sends, and when the daily one goes out.
+struct AlertSettings: View {
+    @Environment(AppModel.self) private var model
+
+    var body: some View {
+        @Bindable var alerts = model.alerts
+        VStack(alignment: .leading, spacing: Space.xl) {
+            if alerts.permission == .denied {
+                SettingsSection(title: nil) {
+                    SettingsRow(title: "Notifications are off for Kakeibo",
+                                detail: "Turn them on in System Settings to get these Alerts.") {
+                        Button("Open Notifications…") {
+                            if let url = URL(string: "x-apple.systempreferences:com.apple.Notifications-Settings.extension") {
+                                NSWorkspace.shared.open(url)
+                            }
+                        }
+                        .buttonStyle(.kit(.secondary))
+                        .fixedSize()
+                    }
+                }
+            }
+            SettingsSection(title: "Alerts") {
+                SettingsRow(title: "Limit almost reached",
+                            detail: "At 80% and 90% of the Session, Weekly, and Fable limits, once each until it resets.") {
+                    Toggle("Limit almost reached", isOn: $alerts.limitAlerts).toggleStyle(.kit).labelsHidden()
+                }
+                SettingsRow(title: "Limit reset", detail: "When a limit you pushed past 80% goes back to 0%.") {
+                    Toggle("Limit reset", isOn: $alerts.resetAlerts).toggleStyle(.kit).labelsHidden()
+                }
+                SettingsRow(title: "Daily numbers", detail: "Today's tokens, cost, and busiest Project, on days with activity.") {
+                    HStack(spacing: Space.md) {
+                        DatePicker("Time", selection: $alerts.dailyTime, displayedComponents: .hourAndMinute)
+                            .labelsHidden()
+                            .datePickerStyle(.field)
+                            .disabled(!alerts.dailyAlert)
+                            .fixedSize()
+                        Toggle("Daily numbers", isOn: $alerts.dailyAlert).toggleStyle(.kit).labelsHidden()
+                    }
+                }
+            }
+        }
+        .task { await model.alerts.refreshPermission() }
     }
 }

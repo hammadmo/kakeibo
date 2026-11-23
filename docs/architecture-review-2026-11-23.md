@@ -19,7 +19,11 @@ Proof of same behavior: popover and kit snapshots unchanged; Dashboard and Setti
 so this is a design change for the user to approve, not a refactor.
 Plan: 1) copy KitWindow, 2) restyle Settings, 3) delete Theme + Appearance tab, 4) restyle Dashboard in M2.
 
-## Limits behind a seam  [Worth exploring]
+## Limits behind a seam  [Not needed, 2026-11-23]
+
+M4 made the alert rules a pure function (`AlertRules.evaluate`) fed by `LimitsService.onReading`, so Alerts are
+tested with scripted readings without a LimitsSource protocol. Revisit only if fetching itself needs tests.
+
 
 Files: Sources/Kakeibo/Limits/LimitsService.swift (181)
 Signal: a dependency cannot be replaced in a test.

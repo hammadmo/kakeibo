@@ -117,6 +117,28 @@ enum SelfTest {
             check("Cancel stops a run", !model.summaries.isRunning(kakeibo))
             unsetenv("APP_CLAUDE")
 
+            // S-030, S-031: limit Alerts from scripted readings (test runs record, never post).
+            let alerts = model.alerts
+            let resetsAt = Date.now.addingTimeInterval(3600)
+            for used in [50.0, 82, 85, 93] {
+                alerts.observe(Limits(session: LimitWindow(used: used, resets: resetsAt)))
+            }
+            alerts.observe(Limits(session: LimitWindow(used: 2, resets: resetsAt.addingTimeInterval(5 * 3600))))
+            check("limit Alerts: 80%, 90%, then the reset, once each",
+                  alerts.sent.map(\.identifier) == ["limit-Session", "limit-Session", "reset-Session"], "\(alerts.sent)")
+            alerts.resetAlerts = false
+            alerts.observe(Limits(session: LimitWindow(used: 95, resets: resetsAt.addingTimeInterval(5 * 3600))))
+            alerts.observe(Limits(session: LimitWindow(used: 1, resets: resetsAt.addingTimeInterval(10 * 3600))))
+            check("a turned-off Alert stays quiet", alerts.sent.last?.identifier == "limit-Session" && alerts.sent.count == 4)
+
+            // S-032: the daily numbers, once, after its time, from today's usage.
+            alerts.dailyMinutes = 0
+            alerts.checkDaily(usage: model.usage)
+            alerts.checkDaily(usage: model.usage)
+            check("the daily Alert goes out once with today's numbers",
+                  alerts.sent.filter { $0.identifier == "daily" }.count == 1
+                    && alerts.sent.last?.title().hasPrefix("Today: 1.24 M tokens") == true, alerts.sent.last?.title() ?? "")
+
             // S-009: old readings are deleted, recent ones kept.
             let old = LimitSnapshot(sessionUsed: 1, sessionResets: .now, weeklyUsed: 1, weeklyResets: .now)
             old.takenAt = Date.now.addingTimeInterval(-91 * 86_400)

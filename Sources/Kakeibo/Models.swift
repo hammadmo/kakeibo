@@ -58,13 +58,16 @@ final class AppModel {
     let limits: LimitsService
     let usage = UsageService()
     let summaries: SummaryService
+    let alerts = AlertService()
     /// The Dashboard's range (7 or 30 days), shared by its charts and lists.
     var dashboardRange: DashboardRange = .week
 
     /// Starts the limits and usage timers.
     func start() {
+        limits.onReading = { [alerts] in alerts.observe($0) }
         limits.start()
         usage.start()
+        alerts.start(usage: usage)
     }
 
     /// Refresh (S-008): fetch limits (skipped if fetched under a minute ago) and read new logs.
