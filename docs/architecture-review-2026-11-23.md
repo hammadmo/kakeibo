@@ -58,3 +58,10 @@ Still open: "Limits behind a seam", which is due at the start of M4 (Alerts).
 `SummaryService` keeps UI state on the main actor; `ClaudeCLI` (process, git, file reads) is nonisolated and runs
 detached. The CLI is a real seam (`APP_CLAUDE`): production and a fake script in the self-test. No new signals.
 Still open: "Limits behind a seam" before M4 (Alerts).
+
+## M5 check-in (version one done)
+5,100 lines; largest `EnsoGauge.swift` (301), then `OverviewPage.swift` (285). No file near 600, no repeated
+fix-log area (five entries across snapshots, the Dashboard, Summarize, and notifications). Settings live in
+`Preferences` (menu bar, refresh, login item) and `AlertService` (alerts); both use a separate UserDefaults
+suite in test runs. Nothing Strong to do. Worth watching: if Settings grows past a few more rows, move
+each tab into its own file under `Settings/`.
