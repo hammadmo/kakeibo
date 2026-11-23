@@ -193,6 +193,24 @@ Status: todo
 
 ---
 
+### S-017 See the Weekly limit by surface
+As the user, I see how much of my Weekly limit went to Claude Code, Chats, Cowork, and Other.
+Screens: overview-light.png, overview-dark.png
+Depends: S-003, S-010
+Acceptance:
+- [unit] Decodes `seven_day_breakdown.rows` (name, share of use, share of limit) and `as_of`; a missing breakdown leaves the card hidden, not empty.
+- [snap] A card on Overview titled "Weekly limit by surface" with "57% used" on the right. One row per surface, in the order Anthropic sends them, with a gold bar for its share of the limit and the text "53% of limit · 93% of use".
+- [snap] A surface at 0% shows the row with an empty bar, so the list keeps the same rows from week to week.
+- [snap] The caption "As of 2:10 AM · week started Thu 3:11 AM" (times in the Mac's format) sits under the rows.
+Status: done
+UX:
+- Surface: inline card on the Overview page (information, no action).
+- States: no breakdown (signed out or older response) → card hidden; a stale reading → the "As of" time says how old it is.
+- Words: "Weekly limit by surface", "57% used", "53% of limit · 93% of use", "As of 01:46 · week started Fri 08:00". Surface names come from Anthropic ("Claude Code", "Chats", "Cowork", "Other").
+- Access: each row reads "Claude Code, 53 percent of the Weekly limit, 93 percent of your use this week".
+
+---
+
 ## M3 Summary: what did we do today?
 
 ### S-020 Summarize a Project's day
@@ -306,7 +324,6 @@ Status: todo
 ---
 
 ## Later
-- Weekly limit by surface: the response's `seven_day_breakdown` splits the Weekly limit into Claude Code, Chats, Cowork, and Other (Claude Code was 93% on 2026-11-23). It could be a Dashboard card in M2.
 - Project cards with sparklines
 - A timeline of today per Project (prompts, files, branch)
 - Live sessions running now

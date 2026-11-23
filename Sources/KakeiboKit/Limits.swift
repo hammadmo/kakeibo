@@ -11,6 +11,36 @@ public struct LimitWindow: Equatable, Sendable {
     }
 }
 
+/// The Weekly limit split by where Claude was used (S-017).
+public struct SurfaceBreakdown: Equatable, Sendable {
+    public struct Row: Equatable, Sendable, Identifiable {
+        public var id: String
+        /// Anthropic's name: "Claude Code", "Chats", "Cowork", "Other".
+        public var name: String
+        /// Share of this week's use, 0...100.
+        public var shareOfUse: Double
+        /// Share of the whole Weekly limit, 0...100.
+        public var shareOfLimit: Double
+
+        public init(id: String, name: String, shareOfUse: Double, shareOfLimit: Double) {
+            self.id = id
+            self.name = name
+            self.shareOfUse = shareOfUse
+            self.shareOfLimit = shareOfLimit
+        }
+    }
+
+    public var rows: [Row]
+    public var asOf: Date?
+    public var weekStarted: Date?
+
+    public init(rows: [Row], asOf: Date? = nil, weekStarted: Date? = nil) {
+        self.rows = rows
+        self.asOf = asOf
+        self.weekStarted = weekStarted
+    }
+}
+
 /// The three limits Kakeibo shows. A plan without a Fable limit has `fable == nil`.
 public struct Limits: Equatable, Sendable {
     public var session: LimitWindow?
@@ -18,6 +48,8 @@ public struct Limits: Equatable, Sendable {
     public var fable: LimitWindow?
     /// Every window key the response had, for `--probe-limits`.
     public var keys: [String] = []
+    /// nil when the response has no `seven_day_breakdown`.
+    public var breakdown: SurfaceBreakdown?
 
     public init(session: LimitWindow? = nil, weekly: LimitWindow? = nil, fable: LimitWindow? = nil, keys: [String] = []) {
         self.session = session
@@ -60,7 +92,23 @@ public struct Limits: Equatable, Sendable {
             }
         }
         limits.keys = keys
+        limits.breakdown = decodeBreakdown(object["seven_day_breakdown"])
         return limits
+    }
+
+    static func decodeBreakdown(_ value: Any?) -> SurfaceBreakdown? {
+        guard let object = value as? [String: Any], let rows = object["rows"] as? [[String: Any]] else { return nil }
+        let parsed = rows.compactMap { row -> SurfaceBreakdown.Row? in
+            guard let name = row["display_name"] as? String else { return nil }
+            return SurfaceBreakdown.Row(
+                id: row["key"] as? String ?? name, name: name,
+                shareOfUse: (row["percent"] as? NSNumber)?.doubleValue ?? 0,
+                shareOfLimit: (row["percent_of_limit"] as? NSNumber)?.doubleValue ?? 0)
+        }
+        guard !parsed.isEmpty else { return nil }
+        return SurfaceBreakdown(rows: parsed,
+                                asOf: (object["as_of"] as? String).flatMap(parseDate),
+                                weekStarted: (object["window_started_at"] as? String).flatMap(parseDate))
     }
 
     static func parseDate(_ text: String) -> Date? {

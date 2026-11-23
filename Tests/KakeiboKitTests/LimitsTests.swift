@@ -48,3 +48,25 @@ import Testing
     #expect(limits.fable?.used == 69)
     #expect(limits.fable?.resets != nil)
 }
+
+@Test func decodesTheWeeklyBreakdown() throws {
+    let json = """
+    {"seven_day_breakdown":{"as_of":"2026-11-22T23:46:06.837241+00:00","rows":[
+      {"display_name":"Claude Code","key":"claude_code","percent":93,"percent_of_limit":53},
+      {"display_name":"Chats","key":"chat","percent":1,"percent_of_limit":1},
+      {"display_name":"Cowork","key":"cowork","percent":6,"percent_of_limit":3},
+      {"display_name":"Other","key":"other","percent":0,"percent_of_limit":0}],
+      "window_started_at":"2026-11-20T06:00:00.814377+00:00"}}
+    """
+    let breakdown = try #require(try Limits.decode(Data(json.utf8)).breakdown)
+    #expect(breakdown.rows.map(\.name) == ["Claude Code", "Chats", "Cowork", "Other"])
+    #expect(breakdown.rows[0].shareOfUse == 93)
+    #expect(breakdown.rows[0].shareOfLimit == 53)
+    #expect(breakdown.rows[3].shareOfLimit == 0)
+    #expect(breakdown.asOf != nil && breakdown.weekStarted != nil)
+}
+
+@Test func noBreakdownMeansHidden() throws {
+    #expect(try Limits.decode(Data(#"{"seven_day_breakdown":null}"#.utf8)).breakdown == nil)
+    #expect(try Limits.decode(Data(#"{"seven_day_breakdown":{"rows":[]}}"#.utf8)).breakdown == nil)
+}

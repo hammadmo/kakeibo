@@ -123,10 +123,17 @@ final class LimitsService {
     /// Also used by snapshot mode to show each state.
     func applyFixture(_ name: String) {
         let now = Date.now
-        let normal = Limits(
+        var normal = Limits(
             session: LimitWindow(used: 42, resets: now.addingTimeInterval(2 * 3600 + 14 * 60 + 30)),
             weekly: LimitWindow(used: 18, resets: now.addingTimeInterval(3 * 86_400 + 3600)),
             fable: LimitWindow(used: 63, resets: now.addingTimeInterval(3 * 86_400 + 3600)))
+        // Shares of the 18% Weekly limit, like the live response's seven_day_breakdown.
+        normal.breakdown = SurfaceBreakdown(
+            rows: [.init(id: "claude_code", name: "Claude Code", shareOfUse: 89, shareOfLimit: 16),
+                   .init(id: "chat", name: "Chats", shareOfUse: 5, shareOfLimit: 1),
+                   .init(id: "cowork", name: "Cowork", shareOfUse: 6, shareOfLimit: 1),
+                   .init(id: "other", name: "Other", shareOfUse: 0, shareOfLimit: 0)],
+            asOf: now.addingTimeInterval(-60), weekStarted: now.addingTimeInterval(-3 * 86_400 - 82_800))
         switch name {
         case "warning":
             var warning = normal

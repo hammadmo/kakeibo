@@ -12,6 +12,7 @@ One name for each thing. Used in buttons, menus, titles, tooltips, errors, and V
 | Resets | When a limit goes back to 0% ("Resets in 2 h 14 m") | renews, refills |
 | Tokens | Input + output + cache tokens from Claude Code | usage, credits |
 | Cost | Estimated API-price value of the tokens, in USD; not a bill | spend, price, charge |
+| Surface | Where Claude was used: Claude Code, Chats, Cowork, Other (Anthropic's names) | app, product, channel |
 | Project | A folder Claude Code worked in | repo, workspace |
 | Today | Since local midnight | last 24 h |
 | Gauge | The ensō ring that shows one limit | meter, dial, progress |

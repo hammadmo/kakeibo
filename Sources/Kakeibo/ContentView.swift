@@ -35,11 +35,23 @@ struct ContentView: View {
     }
 }
 
-/// Stored limit readings, newest first. Charts replace this list in M2.
+/// The Weekly limit by surface (S-017) and stored limit readings, newest first.
+/// M2's charts join this page.
 struct OverviewPage: View {
+    @Environment(AppModel.self) private var model
     @Query(sort: \LimitSnapshot.takenAt, order: .reverse) private var snapshots: [LimitSnapshot]
 
     var body: some View {
+        VStack(alignment: .leading, spacing: Space.xl) {
+            if let breakdown = model.limits.current?.breakdown {
+                WeeklyBySurfaceCard(breakdown: breakdown, weekly: model.limits.current?.weekly)
+            }
+            readings
+        }
+    }
+
+    @ViewBuilder
+    private var readings: some View {
         if snapshots.isEmpty {
             KitEmptyState(title: "No Limits Yet",
                           message: "Kakeibo shows your Session, Weekly, and Fable limits here.")
