@@ -392,9 +392,44 @@ UX:
 
 ---
 
+## M7 Less to do by hand
+
+### S-060 Get Summaries with the daily Alert
+As the user, I turn on "Summarize my day" and the daily Alert brings two lines about my busiest Project, with Summaries of my top three Projects waiting in the Dashboard.
+Screens: settings-alerts-light.png, settings-alerts-dark.png
+Depends: S-020, S-032
+Acceptance:
+- [snap] Settings > Alerts > Daily numbers has a second toggle, "Summarize my day", off by default, with "Uses a few thousand tokens of your plan for each of your three busiest Projects."
+- [self] When the daily Alert is due and it is on, Kakeibo summarizes today's three busiest Projects (one at a time, skipping any already summarized today), then sends the Alert with the first Summary as its body.
+- [self] A failed Summary never holds back the Alert: it goes out with the numbers only.
+- [self] Off (the default) spends no tokens: the Alert carries the numbers only.
+Status: todo
+UX:
+- Surface: a toggle under the daily numbers row in Settings > Alerts.
+- Words: "Summarize my day"; detail as above; disabled while "Daily numbers" is off.
+- States: notifications off → the tab's existing "Open Notifications…" row.
+- Access: VoiceOver reads the toggle with its detail.
+
+### S-061 Open a Project in Finder, a terminal, or an editor
+As the user, I open a Project's folder from Kakeibo in Finder, my terminal, or my editor.
+Screens: today-light.png, today-dark.png
+Depends: S-014, S-050, S-051
+Acceptance:
+- [snap] Each Project on the Today page has an "Open ▾" menu beside its name: Open in Finder, then each installed terminal (Terminal, iTerm, Ghostty, Warp), then each installed editor (VS Code, Cursor, Zed, Xcode).
+- [manual] The same items are in the context menu of Project rows and cards on the Projects page.
+- [unit] Only installed apps are listed, Finder always first.
+- [self] A folder that no longer exists shows the items disabled, with "This folder no longer exists".
+Status: todo
+UX:
+- Surface: a kit pull-down beside the Project name (Today), and context menus (Projects page).
+- Words: "Open ▾"; items "Open in Finder", "Open in Terminal", …; help "Open this Project's folder".
+- States: missing folder → disabled with the reason.
+- Access: the menu button reads "Open Kakeibo in…".
+
+---
+
 ## Later
-- Automatic Summaries with the daily Alert
-- Open a Project in Finder, Terminal, or VS Code
+- (empty: everything planned is built)
 
 ## Dropped
 - Accounts and sign-in inside Kakeibo: it reuses the Claude Code login.
