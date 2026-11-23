@@ -26,3 +26,10 @@ Everything else is main actor.
 ## Test seams
 `APP_STORE` in /tmp switches to fixture limits (`APP_LIMITS`) and fixture logs (`/tmp/Kakeibo-logs`,
 written by `SeedData.writeLogs`). Self-test: `tools/selftest.sh`. Snapshots: `tools/snap.sh`.
+
+## Agent CLI and MCP
+`Main.swift` starts the CLI when there are arguments, else the app. `kakeibo <command>` sends one JSON line over
+a private Unix socket (`~/Library/Application Support/Kakeibo/agent.sock`) to the running app, which runs it on the
+main actor (`AgentRouter`, async: commands may await the usage actor or a Summarize run). `kakeibo mcp` serves
+the same commands as MCP tools. Commands: `Agent/AgentCommands.swift`. All read-only except `refresh`, `open`,
+and `summarize` (spends plan tokens, needs `--yes`). `build.sh` links `~/.local/bin/kakeibo`.

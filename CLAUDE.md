@@ -3,6 +3,9 @@
 A native macOS app in SwiftUI. It runs on this Mac only, with a local
 SwiftData database and no server.
 
+Drive the app with `kakeibo` (the app binary as a CLI, linked by `build.sh`). See `.claude/skills/kakeibo/SKILL.md`.
+Commands live in `Sources/Kakeibo/Agent/AgentCommands.swift`; `kakeibo mcp` serves the same commands over MCP.
+
 ## Layout
 
 - `Sources/Kakeibo/` the app. `App.swift` has the window, menus, and the database location.

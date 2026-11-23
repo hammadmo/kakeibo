@@ -120,10 +120,16 @@ enum MenuBarGlyph {
 @MainActor
 enum Startup {
     private static var started = false
+    /// Kept for agent commands that open a window (`kakeibo open`).
+    static var openWindow: OpenWindowAction?
 
     static func run(model: AppModel, openWindow: OpenWindowAction) {
         guard !started, !CommandLine.arguments.contains("--test-alert") else { return }
         started = true
+        self.openWindow = openWindow
+        // The agent CLI and MCP server reach the running app through this socket.
+        AgentRouter.model = model
+        AgentSocket.listen { await AgentRouter.handle($0) }
         SeedData.insertIfRequested(into: model)
         SeedData.writeLogs()
         SelfTest.runIfRequested(model: model)

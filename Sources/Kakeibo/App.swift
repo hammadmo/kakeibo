@@ -13,7 +13,6 @@ import SwiftUI
 //   APP_LIMITS=<fixture> Kakeibo use fixture limits: normal, warning, signedout, offline, empty
 //   APP_GRID=1 Kakeibo           draw the 8 pt grid and the layout probes over the window
 
-@main
 struct KakeiboApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var delegate
     @State private var model = AppModel(container: Store.makeContainer())

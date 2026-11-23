@@ -54,6 +54,9 @@ signing=(codesign --force --sign "$identity")
 [[ "$identity" == "Developer ID"* ]] && signing+=(--options runtime --timestamp)
 "${signing[@]}" "$app" 2>&1 | grep -v "replacing existing signature" || true
 echo "installed $app (signed: ${identity})"
+# The CLI: the app binary under a short name on PATH (bama agent-cli skill).
+mkdir -p "$HOME/.local/bin"
+ln -sf "$app/Contents/MacOS/Kakeibo" "$HOME/.local/bin/kakeibo"
 
 if [[ " $* " == *" --open "* ]]; then
   osascript -e "quit app \"$name\"" 2>/dev/null || true
