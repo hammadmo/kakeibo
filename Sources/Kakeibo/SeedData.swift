@@ -50,10 +50,10 @@ enum SeedData {
         // (project, today's tokens split as input/output/cache write/cache read)
         let projects: [(String, Int)] = [
             ("/Users/me/Projects/Kakeibo", 412_000),
-            ("/Users/me/Projects/vorssaint", 356_000),
-            ("/Users/me/mac battery app/Hachibu", 268_000),
-            ("/Users/me/Projects/synthetic-city", 132_000),
-            ("/Users/me/Desktop/passporttrails-seo-landing-pages-and-keyword-research", 72_000),
+            ("/Users/me/Projects/garden-planner", 356_000),
+            ("/Users/me/Projects/recipe-box", 268_000),
+            ("/Users/me/Projects/weather-cli", 132_000),
+            ("/Users/me/Desktop/portfolio-site-redesign-and-blog-migration", 72_000),
         ]
         let models = ["claude-opus-5-5", "claude-sonnet-5-5", "claude-fable-5-2"]
         let calendar = Calendar.current
