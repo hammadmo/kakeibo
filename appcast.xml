@@ -2,5 +2,23 @@
 <rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
     <channel>
         <title>Kakeibo</title>
+        <item>
+            <title>0.1</title>
+            <pubDate>Mon, 23 Nov 2026 13:21:07 +0200</pubDate>
+            <sparkle:version>202611231320</sparkle:version>
+            <sparkle:shortVersionString>0.1</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
+            <description><![CDATA[<ul>
+<li>Menu bar ensō for the Session limit, with Weekly and Fable in the popover.</li>
+<li>Today's tokens and estimated cost from Claude Code's logs, and the busiest Projects.</li>
+<li>Dashboard: tokens by day and model, this week vs last, Weekly limit by surface, limit history, a year of activity, every Project's totals.</li>
+<li>Summarize a Project's day with Haiku.</li>
+<li>Alerts at 80% and 90%, on reset, and with the daily numbers.</li>
+<li>`kakeibo` CLI and MCP server.</li>
+</ul>
+]]></description>
+            <enclosure url="https://github.com/hammadmo/kakeibo/releases/download/v0.1/Kakeibo-0.1.zip" length="4127634" type="application/octet-stream" sparkle:edSignature="3hh15P2SKse/hA0IMj61KZLuQEpcxDx058Zn3q6QytdW6M5J//qe7uJtRY2v2RXrvyRlL8RViZFwQnf9OlCHCA=="/>
+        </item>
     </channel>
 </rss>
