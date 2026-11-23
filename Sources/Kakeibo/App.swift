@@ -42,6 +42,9 @@ struct KakeiboApp: App {
         .commands {
             CommandGroup(replacing: .newItem) {}
             CommandGroup(replacing: .appSettings) { SettingsCommand() }
+            CommandGroup(after: .appInfo) {
+                if Updates.canUpdate { Button("Check for Updates…") { Updates.shared.check() } }
+            }
         }
 
         // Opens only in snapshot runs: the popover in a plain window, so it can be captured.

@@ -14,4 +14,8 @@
 <key>LSApplicationCategoryType</key><string>public.app-category.productivity</string>
 <key>NSHighResolutionCapable</key><true/>
 <key>NSPrincipalClass</key><string>NSApplication</string>
+<key>SUFeedURL</key><string>https://raw.githubusercontent.com/hammadmo/kakeibo/main/appcast.xml</string>
+<key>SUPublicEDKey</key><string>KVgBQyKQPblSEevqheBsLQpujVInWqq4QaDClx1XLJQ=</string>
+<key>SUEnableAutomaticChecks</key><true/>
+<key>SUVerifyUpdateBeforeExtraction</key><true/>
 </dict></plist>

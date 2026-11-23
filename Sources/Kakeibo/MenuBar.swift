@@ -135,6 +135,7 @@ enum Startup {
         SelfTest.runIfRequested(model: model)
         LimitsProbe.runIfRequested(model: model)
         if !SelfTest.requested && !LimitsProbe.requested { model.start() }
+        Updates.shared.start(automatic: model.preferences.checksForUpdates)
         Snapshot.runIfRequested(model: model, openWindow: openWindow)
     }
 }

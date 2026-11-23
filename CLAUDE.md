@@ -18,6 +18,7 @@ Commands live in `Sources/Kakeibo/Agent/AgentCommands.swift`; `kakeibo mcp` serv
 ## Build and check
 
 - Build and install: `./build.sh`. Add `--open` to restart the app with the new build. The build shows warnings; fix them.
+- Release: `tools/release.sh <version>` (see `docs/RELEASING.md`); it never uploads or pushes.
 - Notarize: `./build.sh --notarize` (Developer ID, notary profile `hachibu` or `NOTARY_PROFILE`). Every plain build re-signs and drops the stapled ticket, so notarize the build you give to anyone.
 - Unit tests: `swift test --scratch-path ~/Library/Developer/Kakeibo/test-build`.
 - Self-test (the app's real functions on a /tmp store): `tools/selftest.sh`. Exit 0 when every check passes. Add a check for every story with logic in `SelfTest.swift`.

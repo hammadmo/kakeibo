@@ -132,6 +132,18 @@ struct PopoverFooter: View {
                     .accessibilityLabel("Refresh")
                 }
             }
+            if let version = Updates.shared.availableVersion {
+                HStack {
+                    Text("Kakeibo \(version) is available").kitType(.label).foregroundStyle(Ink.text)
+                    Spacer()
+                    Button("Install…") {
+                        PopoverWindow.close()
+                        Updates.shared.check()
+                    }
+                    .buttonStyle(.kit(.secondary))
+                    .fixedSize()
+                }
+            }
             Rectangle().fill(Ink.hairline).frame(height: Metric.hairline)
             HStack(spacing: 0) {
                 Button("Dashboard…") { Dashboard.open(openWindow) }

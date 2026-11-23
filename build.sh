@@ -44,6 +44,16 @@ mkdir -p "$HOME/Applications"
 rm -rf "$app"
 mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources"
 cp "$bin" "$app/Contents/MacOS/$name"
+# Sparkle (self-updates): the framework goes in Contents/Frameworks, and the
+# binary looks for it there instead of in the build folder.
+sparkle="$scratch/$config/Sparkle.framework"
+[[ -d "$sparkle" ]] || { echo "build failed: no Sparkle.framework in $scratch/$config"; exit 1; }
+mkdir -p "$app/Contents/Frameworks"
+ditto "$sparkle" "$app/Contents/Frameworks/Sparkle.framework"
+for rpath in $(otool -l "$app/Contents/MacOS/$name" | awk '/LC_RPATH/ { getline; getline; print $2 }'); do
+  [[ "$rpath" == /* ]] && install_name_tool -delete_rpath "$rpath" "$app/Contents/MacOS/$name" 2>/dev/null
+done
+install_name_tool -add_rpath @executable_path/../Frameworks "$app/Contents/MacOS/$name" 2>/dev/null || true
 sed -e "s/__BUILD__/$(date +%Y%m%d%H%M)/" "$here/Info.plist.in" > "$app/Contents/Info.plist"
 # The icon: Icon/AppIcon.icon -> Resources/Assets.car + AppIcon.icns, rebuilt when it changed.
 if [[ -d "$here/Icon/AppIcon.icon" ]]; then
@@ -55,8 +65,23 @@ if [[ -d "$here/Icon/AppIcon.icon" ]]; then
 fi
 xattr -cr "$app"
 signing=(codesign --force --sign "$identity")
-[[ "$identity" == "Developer ID"* ]] && signing+=(--options runtime --timestamp)
-"${signing[@]}" "$app" 2>&1 | grep -v "replacing existing signature" || true
+if [[ "$identity" != - ]]; then
+  signing+=(--options runtime)
+  [[ "$identity" == "Developer ID"* ]] && signing+=(--timestamp)
+fi
+sign() {
+  local out
+  out=$("${signing[@]}" "$@" 2>&1) || { print -r -- "$out"; echo "signing ${@[-1]:t} failed"; exit 1; }
+}
+# Inside out: Sparkle's helpers, the framework, then the app.
+sp="$app/Contents/Frameworks/Sparkle.framework/Versions/B"
+sign "$sp/XPCServices/Installer.xpc"
+sign --preserve-metadata=entitlements "$sp/XPCServices/Downloader.xpc"
+sign "$sp/Autoupdate"
+sign "$sp/Updater.app"
+sign "$app/Contents/Frameworks/Sparkle.framework"
+sign "$app"
+codesign --verify --deep --strict "$app" || { echo "the signed app did not verify"; exit 1; }
 echo "installed $app (signed: ${identity})"
 # The CLI: the app binary under a short name on PATH (bama agent-cli skill).
 mkdir -p "$HOME/.local/bin"

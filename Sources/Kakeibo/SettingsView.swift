@@ -115,24 +115,41 @@ struct GeneralSettings: View {
 }
 
 struct AboutSettings: View {
-    private var version: String {
-        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0"
-    }
+    @Environment(AppModel.self) private var model
 
     var body: some View {
-        VStack(spacing: Space.lg) {
-            SealMark(size: Metric.sealSize * 2)
-            VStack(spacing: Space.xs) {
-                Text("Kakeibo").kitType(.title).foregroundStyle(Ink.text)
-                Text("Version \(version)").kitType(.meta).foregroundStyle(Ink.textSoft)
+        let preferences = model.preferences
+        VStack(spacing: Space.xl) {
+            VStack(spacing: Space.lg) {
+                SealMark(size: Metric.sealSize * 2)
+                VStack(spacing: Space.xs) {
+                    Text("Kakeibo").kitType(.title).foregroundStyle(Ink.text)
+                    Text("Version \(Updates.installedVersion)").kitType(.meta).foregroundStyle(Ink.textSoft)
+                }
+                Text("A ledger of your Claude usage. Kakeibo reads Claude Code's logs on this Mac and asks Anthropic only for your plan limits. Costs are estimates at API prices.")
+                    .kitType(.body)
+                    .foregroundStyle(Ink.textSoft)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
             }
-            Text("A ledger of your Claude usage. Kakeibo reads Claude Code's logs on this Mac and asks Anthropic only for your plan limits. Costs are estimates at API prices.")
-                .kitType(.body)
-                .foregroundStyle(Ink.textSoft)
-                .multilineTextAlignment(.center)
-                .fixedSize(horizontal: false, vertical: true)
+            .frame(maxWidth: .infinity)
+            // Snapshot runs show it too, so the tab can be checked; no updater runs there.
+            if Updates.canUpdate || Snapshot.isRunning {
+                SettingsSection(title: "Updates") {
+                    SettingsRow(title: "Check for updates automatically",
+                                detail: "Once a day. Kakeibo reads its update feed on GitHub and sends nothing about your Mac.") {
+                        Toggle("Check for updates automatically",
+                               isOn: Binding(get: { preferences.checksForUpdates }, set: { preferences.checksForUpdates = $0 }))
+                            .toggleStyle(.kit).labelsHidden()
+                    }
+                    SettingsRow(title: "Check now", detail: nil) {
+                        Button("Check for Updates…") { Updates.shared.check() }
+                            .buttonStyle(.kit(.secondary))
+                            .fixedSize()
+                    }
+                }
+            }
         }
-        .frame(maxWidth: .infinity)
     }
 }
 

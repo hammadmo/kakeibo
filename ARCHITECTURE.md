@@ -33,3 +33,8 @@ a private Unix socket (`~/Library/Application Support/Kakeibo/agent.sock`) to th
 main actor (`AgentRouter`, async: commands may await the usage actor or a Summarize run). `kakeibo mcp` serves
 the same commands as MCP tools. Commands: `Agent/AgentCommands.swift`. All read-only except `refresh`, `open`,
 and `summarize` (spends plan tokens, needs `--yes`). `build.sh` links `~/.local/bin/kakeibo`.
+
+## Updates
+Sparkle 2 (`Updates.swift`, like Hachibu): feed `appcast.xml` on `github.com/hammadmo/kakeibo`, downloads from its
+releases, each checked against `SUPublicEDKey`. `build.sh` embeds Sparkle in `Contents/Frameworks` and signs its
+helpers inside out. Never runs in test, CLI, or one-shot runs. Releases: `tools/release.sh`, `docs/RELEASING.md`.

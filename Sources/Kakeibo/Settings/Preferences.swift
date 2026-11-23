@@ -29,6 +29,11 @@ final class Preferences {
     var refreshMinutes: Int { didSet { defaults.set(refreshMinutes, forKey: "limits.refreshMinutes"); onRefreshChange?() } }
     static let refreshChoices = [1, 5, 15]
 
+    /// Sparkle checks for a new version once a day (Settings > About).
+    var checksForUpdates: Bool {
+        didSet { defaults.set(checksForUpdates, forKey: "updates.automatic"); Updates.shared.setAutomatic(checksForUpdates) }
+    }
+
     /// Called when the refresh interval changes, so the timer restarts.
     var onRefreshChange: (() -> Void)?
 
@@ -43,6 +48,7 @@ final class Preferences {
         menuBarStyle = MenuBarStyle(rawValue: defaults.string(forKey: "menuBar.style") ?? "") ?? .session
         let minutes = defaults.integer(forKey: "limits.refreshMinutes")
         refreshMinutes = Self.refreshChoices.contains(minutes) ? minutes : 5
+        checksForUpdates = defaults.object(forKey: "updates.automatic") as? Bool ?? true
     }
 
     /// Registers or removes the login item. Never in test runs.
