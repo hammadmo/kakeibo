@@ -26,13 +26,14 @@ final class LimitSnapshot {
 
 /// The Dashboard pages. Snapshot mode walks through every case.
 enum SidebarItem: String, CaseIterable, Identifiable {
-    case overview, projects
+    case overview, today, projects
 
     var id: String { rawValue }
 
     var title: String {
         switch self {
         case .overview: "Overview"
+        case .today: "Today"
         case .projects: "Projects"
         }
     }
@@ -40,6 +41,7 @@ enum SidebarItem: String, CaseIterable, Identifiable {
     var symbol: String {
         switch self {
         case .overview: "gauge.with.dots.needle.33percent"
+        case .today: "clock"
         case .projects: "folder"
         }
     }

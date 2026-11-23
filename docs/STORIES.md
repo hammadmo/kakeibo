@@ -352,7 +352,7 @@ Acceptance:
 - [unit] From today's log lines, each session becomes one entry: start and end time, the branch, its first prompt (first 120 characters), the number of prompts, and the files changed.
 - [snap] A "Today" page in the Dashboard, one section per Project (busiest first), each session a row: "09:12–10:40 · main", the first prompt, and "6 prompts · 4 files".
 - [snap] No activity today: "Nothing yet today" and "Sessions show here as Claude Code works."
-Status: todo
+Status: done
 UX:
 - Surface: a Dashboard page (a place people come back to).
 - Words: page "Today"; row meta "6 prompts · 4 files"; branch shown as-is; help on the files count lists the names.

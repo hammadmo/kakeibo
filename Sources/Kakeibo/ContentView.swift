@@ -21,6 +21,7 @@ struct ContentView: View {
                 Group {
                     switch model.sidebar ?? .overview {
                     case .overview: OverviewPage()
+                    case .today: TodayPage()
                     case .projects: ProjectsPage()
                     }
                 }

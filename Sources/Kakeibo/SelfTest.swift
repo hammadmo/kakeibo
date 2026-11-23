@@ -140,6 +140,13 @@ enum SelfTest {
                   alerts.sent.filter { $0.identifier == "daily" }.count == 1
                     && alerts.sent.last?.title().hasPrefix("Today: 1.24 M tokens") == true, alerts.sent.last?.title() ?? "")
 
+            // S-051: today's timeline from the fixture logs.
+            let timeline = await model.usage.timeline()
+            check("the timeline has today's sessions with prompt, branch, and files",
+                  timeline.count == 5 && timeline.first?.sessions.first?.firstPrompt == "Add the activity heatmap to the Dashboard"
+                    && timeline.first?.sessions.first?.branch == "dashboard-charts" && timeline.first?.sessions.first?.files.count == 1,
+                  "\(timeline.map { ($0.project, $0.sessions.count) })")
+
             // S-040 to S-042: Settings > General.
             let preferences = model.preferences
             check("the menu bar shows Session % by default, refresh every 5 minutes",

@@ -75,3 +75,20 @@ extension UsageService {
         return await store.byProject(from: start).map(\.project)
     }
 }
+
+extension UsageService {
+    /// Today's sessions per Project, busiest Project first (S-051, S-052).
+    /// Reads the Projects' log files off the main thread.
+    func timeline() async -> [(project: String, sessions: [TimelineSession])] {
+        let start = Calendar.current.startOfDay(for: .now)
+        var result: [(project: String, sessions: [TimelineSession])] = []
+        for project in todayByProject.map(\.id) {
+            let files = await store.files(of: project)
+            let sessions = await Task.detached(priority: .userInitiated) {
+                Timeline.build(lines: files.flatMap(ClaudeCLI.lines), project: project, from: start)
+            }.value
+            if !sessions.isEmpty { result.append((project, sessions)) }
+        }
+        return result
+    }
+}

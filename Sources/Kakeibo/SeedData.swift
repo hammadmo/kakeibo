@@ -78,7 +78,7 @@ enum SeedData {
                 if day == 0 {
                     // Today's prompt and edit, so Summarize has a digest (S-020).
                     let stamp = formatter.string(from: time.addingTimeInterval(-30))
-                    lines.append(#"{"type":"user","cwd":"\#(project)","timestamp":"\#(stamp)","sessionId":"seed-\#(index)","message":{"role":"user","content":"Add the activity heatmap to the Dashboard"}}"#)
+                    lines.append(#"{"type":"user","cwd":"\#(project)","timestamp":"\#(stamp)","sessionId":"seed-\#(index)","gitBranch":"\#(index == 0 ? "dashboard-charts" : "main")","message":{"role":"user","content":"\#(index == 0 ? "Add the activity heatmap to the Dashboard" : "Tidy up the README and fix the failing test")"}}"#)
                     lines.append(#"{"type":"assistant","cwd":"\#(project)","timestamp":"\#(stamp)","sessionId":"seed-\#(index)","message":{"role":"assistant","content":[{"type":"tool_use","name":"Edit","input":{"file_path":"\#(project)/Sources/Dashboard.swift"}}]}}"#)
                 }
                 lines.append(#"{"message":{"model":"\#(model)","id":"msg_seed_\#(serial)","type":"message","role":"assistant","content":[],"usage":{"input_tokens":\#(input),"cache_creation_input_tokens":\#(write),"cache_read_input_tokens":\#(read),"output_tokens":\#(output),"cache_creation":{"ephemeral_1h_input_tokens":\#(write),"ephemeral_5m_input_tokens":0}}},"requestId":"req_seed_\#(serial)","type":"assistant","timestamp":"\#(formatter.string(from: time))","cwd":"\#(project)","sessionId":"seed-\#(index)"}"#)
