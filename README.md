@@ -18,7 +18,7 @@
 </p>
 
 <p align="center">
-  <img src="docs/images/hero.png" width="664" alt="The Kakeibo popover in dark and light: a large Session gauge at 42%, Weekly at 18% and Fable at 63% with when each resets, today's 1.24 M tokens at an estimated $1.78, and the three busiest projects">
+  <img src="docs/images/hero.png" width="664" alt="The Kakeibo popover in dark and light: a large Session gauge at 42%, Weekly at 18% and Fable at 63% with when each resets, today's 1.24 M tokens at an estimated $1.78, one live session under Live now, and the three busiest projects">
 </p>
 
 The name comes from *kakeibo* (家計簿), the Japanese household ledger: write down
@@ -48,9 +48,10 @@ you press **Summarize**, it runs Claude Code with Haiku. There is no account and
 | Feature | What it does |
 | --- | --- |
 | **Menu bar** | An open brush ring for the Session limit, with its percentage. It turns vermilion at 90%. Choose Gauge Only, Session %, Session + Weekly, or Session + Fable. |
-| **Popover** | Session, Weekly, and Fable gauges with when each resets, today's tokens and estimated cost, and the three busiest projects. |
-| **Dashboard** | Tokens by day, stacked by model, for 7 or 30 days. This week against the same point last week. The split by model. The Weekly limit by surface (Claude Code, Chats, Cowork). Limit history. |
-| **Projects** | A year of activity as a grid, for all projects or one, and every project's tokens, cost, and last activity, sortable. |
+| **Popover** | Session, Weekly, and Fable gauges with when each resets, today's tokens and estimated cost, live sessions, and the three busiest projects. |
+| **Dashboard** | Opens on your usage: every limit with when it resets, and today's numbers. Then tokens by day, stacked by model, for 7 or 30 days. This week against the same point last week. The split by model. The Weekly limit by surface (Claude Code, Chats, Cowork). Limit history. |
+| **Today** | Each project's sessions today: times, branch, the first prompt, prompts and files changed. Live sessions are marked. |
+| **Projects** | The six busiest projects as cards with a 14-day line, a year of activity as a grid, for all projects or one, and every project's tokens, cost, and last activity, sortable. |
 | **Summarize** | Two sentences from Claude (Haiku) about what you did in a project today. It reads only your own prompts, the names of changed files, and the day's git commits, and spends a few thousand tokens of your plan. |
 | **Alerts** | At 80% and 90% of any limit, when a limit you pushed past 80% resets, and the day's numbers at a time you choose. Each can be switched off. |
 | **`kakeibo` CLI and MCP** | Ask Kakeibo from Terminal, Claude Code, or any MCP client. See below. |
@@ -61,14 +62,21 @@ you press **Summarize**, it runs Claude Code with Haiku. There is no account and
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/images/overview-full-dark.png">
-    <img src="docs/images/overview-full-light.png" width="720" alt="The Dashboard's Overview: this week's tokens and cost, the split by model, tokens by day stacked by model, the Weekly limit by surface, and Session and Weekly limit history">
+    <img src="docs/images/overview-full-light.png" width="720" alt="The Dashboard's Overview, opening on the Usage card: Session, Weekly, and Fable gauges with when each resets, and today's tokens, cost, replies, projects, and live sessions; then this week's tokens, the split by model, tokens by day stacked by model, the Weekly limit by surface, and limit history">
+  </picture>
+</p>
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/today-dark.png">
+    <img src="docs/images/today-light.png" width="720" alt="The Dashboard's Today page: each project's sessions today with start and end time, branch, the first prompt, and how many prompts and files; the live session is marked with a gold dot and 'now'">
   </picture>
 </p>
 
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/images/projects-dark.png">
-    <img src="docs/images/projects-light.png" width="720" alt="The Dashboard's Projects page: a year of activity in gold steps, and each project's tokens, cost, and last activity, with a Summary under one project">
+    <img src="docs/images/projects-light.png" width="720" alt="The Dashboard's Projects page: the six busiest projects as cards with a 14-day line each, then a year of activity in gold steps">
   </picture>
 </p>
 

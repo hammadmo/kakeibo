@@ -42,3 +42,9 @@ Symptom: "Resets Thu 04:52" for a weekly reset at 4:52 PM, in the popover, Dashb
 Cause: `ResetText.short` formatted the hour as two digits with AM/PM omitted, which is a 12-hour clock.
 Fix: use the Mac's own time style (`.hour().minute()`), so it reads "Thu 4:52 PM" (or "Thu 16:52").
 Rule: never omit AM/PM from a 12-hour time; use the locale's time style instead of a fixed pattern.
+
+## The popover opened with a focus ring on "+2 more"
+Symptom: a blue focus ring around the first button in the popover as soon as it opened (seen in the README hero).
+Cause: the popover's window made its first focusable control key on open.
+Fix: `.noInitialFocus()` on `PopoverView`, like every other window; Tab still moves focus.
+Rule: every window and popover opens with no initial focus.

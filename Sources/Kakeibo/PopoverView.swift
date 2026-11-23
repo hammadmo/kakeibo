@@ -22,6 +22,8 @@ struct PopoverView: View {
         .padding(Space.lg)
         .frame(width: Metric.popoverWidth)
         .background(Ink.surface)
+        // Opens calm: no focus ring on the first button ("+2 more") until Tab is pressed.
+        .noInitialFocus()
     }
 }
 
