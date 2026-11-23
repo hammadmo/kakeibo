@@ -6,6 +6,10 @@
 # Usage: ./build.sh            release build, install
 #        ./build.sh --debug    debug build, install
 #        ./build.sh --open     install, then quit the running copy and open the new one
+#        ./build.sh --notarize also send the app to Apple's notary and staple the ticket.
+#                              Needs a Developer ID certificate and a saved notary login.
+#                              Uses the `hachibu` profile (same team) unless NOTARY_PROFILE is set:
+#                              xcrun notarytool store-credentials kakeibo
 set -euo pipefail
 here=${0:A:h}
 name="Kakeibo"
@@ -57,6 +61,21 @@ echo "installed $app (signed: ${identity})"
 # The CLI: the app binary under a short name on PATH (bama agent-cli skill).
 mkdir -p "$HOME/.local/bin"
 ln -sf "$app/Contents/MacOS/Kakeibo" "$HOME/.local/bin/kakeibo"
+
+if [[ " $* " == *" --notarize "* ]]; then
+  [[ "$identity" == "Developer ID"* ]] || { echo "notarizing needs a Developer ID Application certificate"; exit 1; }
+  profile="${NOTARY_PROFILE:-hachibu}"
+  xcrun notarytool history --keychain-profile "$profile" >/dev/null 2>&1 ||
+    { echo "no notary login \"$profile\": run xcrun notarytool store-credentials $profile"; exit 1; }
+  codesign --verify --strict "$app" || { echo "the signed app did not verify"; exit 1; }
+  zip="$scratch/$name.zip"
+  rm -f "$zip"
+  ditto -c -k --keepParent "$app" "$zip"
+  xcrun notarytool submit "$zip" --keychain-profile "$profile" --wait
+  xcrun stapler staple "$app"
+  spctl --assess --type execute --verbose "$app"
+  echo "notarized $app"
+fi
 
 if [[ " $* " == *" --open "* ]]; then
   osascript -e "quit app \"$name\"" 2>/dev/null || true
