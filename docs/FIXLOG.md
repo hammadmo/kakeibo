@@ -48,3 +48,12 @@ Symptom: a blue focus ring around the first button in the popover as soon as it 
 Cause: the popover's window made its first focusable control key on open.
 Fix: `.noInitialFocus()` on `PopoverView`, like every other window; Tab still moves focus.
 Rule: every window and popover opens with no initial focus.
+
+## "Your Claude Code login expired. Run claude in Terminal…" after every quiet stretch
+Symptom: after hours without Claude Code (overnight), the popover said the login expired and offered Open Terminal.
+Cause: Claude Code's access token lasts about 8 hours and only Claude Code renews it, when it runs. Kakeibo read
+an expired token as a lost login. The login itself was fine; signing in again was never needed.
+Fix: on an expired token (or a 401), Kakeibo runs `claude auth status` (no tokens spent, at most every 10 minutes)
+and reads the Keychain again. Until it is renewed it keeps the last reading and says limits update when Claude Code
+runs; Open Terminal is only for a real sign-out. Settings shows "Waiting for Claude Code".
+Rule: tell an expired token apart from a sign-out; never send people to sign in when the app that owns the login renews it.

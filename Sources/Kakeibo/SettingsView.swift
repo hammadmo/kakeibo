@@ -100,7 +100,7 @@ struct GeneralSettings: View {
         switch model.limits.status {
         case .ok, .offline: "Signed in"
         case .signedOut: "Signed out"
-        case .expired: "Expired"
+        case .expired: "Waiting for Claude Code"
         case .loading: "Checking…"
         }
     }
@@ -108,7 +108,8 @@ struct GeneralSettings: View {
     private var loginTone: StatusPill.Tone {
         switch model.limits.status {
         case .ok, .offline: .good
-        case .signedOut, .expired: .warning
+        case .signedOut: .warning
+        case .expired: .idle
         case .loading: .idle
         }
     }

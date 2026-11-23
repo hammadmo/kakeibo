@@ -94,11 +94,9 @@ private struct StatusLine: View {
             EmptyView()
         case .loading:
             note("Fetching limits…")
-        case .signedOut, .expired:
+        case .signedOut:
             VStack(spacing: Space.sm) {
-                note(status == .expired
-                     ? "Your Claude Code login expired. Run claude in Terminal to sign in again."
-                     : "Sign in to Claude Code to see your limits: run claude in Terminal, then /login.")
+                note("Sign in to Claude Code to see your limits: run claude in Terminal, then /login.")
                 Button("Open Terminal") {
                     PopoverWindow.close()
                     NSWorkspace.shared.open(URL(fileURLWithPath: "/System/Applications/Utilities/Terminal.app"))
@@ -106,6 +104,10 @@ private struct StatusLine: View {
                     .buttonStyle(.kit(.secondary))
                     .fixedSize()
             }
+        case .expired:
+            // Not signed out: Claude Code renews its login when it runs.
+            note((updatedAt.map { "Showing limits from \($0.formatted(date: .omitted, time: .shortened)). " } ?? "")
+                 + "They update the next time Claude Code runs; it renews its login every few hours.")
         case .offline:
             note(updatedAt.map { "Showing limits from \($0.formatted(date: .omitted, time: .shortened)). Unable to reach Anthropic." }
                  ?? "Unable to reach Anthropic.")

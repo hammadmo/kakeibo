@@ -198,6 +198,18 @@ enum SelfTest {
                   !ProjectOpener.canOpen("/Users/me/Projects/Kakeibo") && ProjectOpener.canOpen(NSHomeDirectory())
                     && ProjectOpener.targets.finder == .finder)
 
+            // An expired login: Kakeibo asks Claude Code (`claude auth status`) at most every 10 minutes.
+            let marker = "/tmp/Kakeibo-renew-count"
+            try? FileManager.default.removeItem(atPath: marker)
+            fakeCLI("echo renew >> \(marker)")
+            let first = await model.limits.renewIfDue()
+            let second = await model.limits.renewIfDue()
+            let third = await model.limits.renewIfDue(now: Date.now.addingTimeInterval(LimitsService.renewalGap + 1))
+            let runs = ((try? String(contentsOfFile: marker, encoding: .utf8)) ?? "").split(separator: "\n").count
+            check("an expired login is renewed through Claude Code, at most every 10 minutes",
+                  first && !second && third && runs == 2, "\(first) \(second) \(third) \(runs)")
+            unsetenv("APP_CLAUDE")
+
             // S-009: old readings are deleted, recent ones kept.
             let old = LimitSnapshot(sessionUsed: 1, sessionResets: .now, weeklyUsed: 1, weeklyResets: .now)
             old.takenAt = Date.now.addingTimeInterval(-91 * 86_400)

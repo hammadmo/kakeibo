@@ -107,6 +107,23 @@ enum ClaudeCLI {
         return found.flatMap { $0.hasPrefix("/") ? URL(fileURLWithPath: $0) : nil }
     }
 
+    /// `claude auth status`: Claude Code reads its login and renews an expired
+    /// access token. Spends no tokens. Gives up after 30 seconds.
+    nonisolated static func renewLogin() {
+        guard let claude = find() else { return }
+        let process = Process()
+        process.executableURL = claude
+        process.arguments = ["auth", "status"]
+        process.currentDirectoryURL = FileManager.default.temporaryDirectory
+        process.standardInput = FileHandle.nullDevice
+        process.standardOutput = FileHandle.nullDevice
+        process.standardError = FileHandle.nullDevice
+        guard (try? process.run()) != nil else { return }
+        let deadline = Date.now.addingTimeInterval(30)
+        while process.isRunning && Date.now < deadline { Thread.sleep(forTimeInterval: 0.2) }
+        if process.isRunning { process.terminate() }
+    }
+
     nonisolated static func lines(_ url: URL) -> [Data] {
         guard let data = try? Data(contentsOf: url) else { return [] }
         return data.split(separator: 0x0A).map { Data($0) }

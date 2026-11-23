@@ -24,7 +24,11 @@ struct UsageCard: View {
                 }
                 .frame(maxWidth: .infinity)
             }
-            if limits == nil, model.limits.status == .signedOut || model.limits.status == .expired {
+            if model.limits.status == .expired {
+                Text("Limits update the next time Claude Code runs; it renews its login every few hours.")
+                    .kitType(.label).foregroundStyle(Ink.textSoft)
+                    .frame(maxWidth: .infinity)
+            } else if limits == nil, model.limits.status == .signedOut {
                 Text("Sign in to Claude Code to see your limits: run claude in Terminal, then /login.")
                     .kitType(.label).foregroundStyle(Ink.textSoft)
                     .frame(maxWidth: .infinity)

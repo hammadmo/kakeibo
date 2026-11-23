@@ -62,8 +62,13 @@ final class LimitsService {
         lastFetch = .now
         if let fixture = Self.fixture { applyFixture(fixture); return true }
 
-        guard let login = ClaudeLogin.read() else { status = .signedOut; return true }
-        if let expires = login.expiresAt, expires < .now { status = .expired; return true }
+        guard var login = ClaudeLogin.read() else { status = .signedOut; return true }
+        // The access token lasts about 8 hours and only Claude Code renews it.
+        // Ask Claude Code to look at its login (no tokens spent), then read it again.
+        if login.isExpired {
+            if await renewIfDue(), let renewed = ClaudeLogin.read() { login = renewed }
+            if login.isExpired { status = .expired; return true }
+        }
         do {
             var request = URLRequest(url: URL(string: "https://api.anthropic.com/api/oauth/usage")!)
             request.setValue("Bearer \(login.accessToken)", forHTTPHeaderField: "Authorization")
@@ -71,7 +76,12 @@ final class LimitsService {
             request.timeoutInterval = 20
             let (data, response) = try await URLSession.shared.data(for: request)
             let code = (response as? HTTPURLResponse)?.statusCode ?? 0
-            if code == 401 { status = .expired; return true }
+            if code == 401 {
+                // Renewed elsewhere, or not yet: renew once and try again on the next tick.
+                if await renewIfDue(), ClaudeLogin.read()?.accessToken != login.accessToken { lastFetch = nil }
+                status = .expired
+                return true
+            }
             guard code == 200 else { status = .offline("HTTP \(code)"); return true }
             apply(try Limits.decode(data))
         } catch {
@@ -82,6 +92,21 @@ final class LimitsService {
 
     /// Called with every new reading from Anthropic (the Alerts listen here).
     var onReading: ((Limits) -> Void)?
+
+    /// When Kakeibo last asked Claude Code to renew its login.
+    private var lastRenewal: Date?
+    /// At most one renewal every 10 minutes.
+    static let renewalGap: TimeInterval = 600
+
+    /// Runs `claude auth status`, which reads Claude Code's login and renews an
+    /// expired token with its refresh token. Returns false when skipped (too soon).
+    @discardableResult
+    func renewIfDue(now: Date = .now) async -> Bool {
+        if let lastRenewal, now.timeIntervalSince(lastRenewal) < Self.renewalGap { return false }
+        lastRenewal = now
+        await Task.detached(priority: .utility) { ClaudeCLI.renewLogin() }.value
+        return true
+    }
 
     private func apply(_ limits: Limits) {
         current = limits
@@ -145,6 +170,8 @@ final class LimitsService {
             var warning = normal
             warning.session = LimitWindow(used: 92, resets: now.addingTimeInterval(38 * 60 + 30))
             current = warning; updatedAt = now; status = .ok
+        case "expired":
+            current = normal; updatedAt = now.addingTimeInterval(-3 * 3600 - 20 * 60); status = .expired
         case "signedout":
             current = nil; status = .signedOut
         case "offline":
@@ -162,6 +189,8 @@ final class LimitsService {
 struct ClaudeLogin {
     let accessToken: String
     let expiresAt: Date?
+
+    var isExpired: Bool { expiresAt.map { $0 < .now } ?? false }
 
     static func read() -> ClaudeLogin? {
         let query: [String: Any] = [

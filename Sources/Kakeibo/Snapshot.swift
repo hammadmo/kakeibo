@@ -17,7 +17,7 @@ enum Snapshot {
     /// Popover pages and the fixture each one shows.
     static let popoverPages: [(page: String, fixture: String)] = [
         ("popover", "normal"), ("popover-warning", "warning"), ("popover-signedout", "signedout"),
-        ("popover-offline", "offline"), ("popover-empty", "empty"),
+        ("popover-offline", "offline"), ("popover-expired", "expired"), ("popover-empty", "empty"),
     ]
 
     static func runIfRequested(model: AppModel, openWindow: OpenWindowAction) {

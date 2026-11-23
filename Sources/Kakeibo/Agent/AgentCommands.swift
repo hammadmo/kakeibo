@@ -20,7 +20,9 @@ enum AgentCommands {
         AgentCommand(name: "limits", summary: "Show the Session, Weekly, and Fable limits: Used % and when each resets, plus the Weekly limit by surface.",
                      example: "kakeibo limits --json", readOnly: true) { _, model in
             guard let limits = model.limits.current else {
-                throw AgentError.unavailable("no limits yet (\(statusName(model.limits.status))). Sign in with `claude` then /login, or run `kakeibo refresh`")
+                throw AgentError.unavailable(model.limits.status == .expired
+                    ? "no limits yet: Claude Code's login renews the next time Claude Code runs"
+                    : "no limits yet (\(statusName(model.limits.status))). Sign in with `claude` then /login, or run `kakeibo refresh`")
             }
             var result: JSONObject = ["status": statusName(model.limits.status),
                                       "updatedAt": model.limits.updatedAt.map(JSON.date) ?? NSNull()]
@@ -145,7 +147,7 @@ enum AgentCommands {
         case .ok: "ok"
         case .loading: "loading"
         case .signedOut: "signed_out"
-        case .expired: "expired"
+        case .expired: "waiting_for_claude_code"
         case .offline(let reason): "offline: \(reason)"
         }
     }
