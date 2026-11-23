@@ -136,6 +136,9 @@ mkdir -p ~/.local/bin && ln -sf /Applications/Kakeibo.app/Contents/MacOS/Kakeibo
 | `kakeibo projects --sort cost` | Every project's tokens, cost, and last activity |
 | `kakeibo summary <project>` | Today's Summary of a project |
 | `kakeibo summarize <project> --yes` | Make one with Haiku (spends plan tokens, so it needs `--yes`) |
+| `kakeibo live` | Sessions that replied in the last 5 minutes, with their tokens |
+| `kakeibo timeline --project <project>` | Today's sessions: times, branch, first prompt, prompts and files |
+| `kakeibo project open <project> --in ghostty` | Open the folder in Finder (default), a terminal, or an editor |
 
 Add `--json` for JSON, and run `kakeibo help` for every command and option.
 

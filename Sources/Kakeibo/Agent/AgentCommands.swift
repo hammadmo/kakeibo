@@ -6,7 +6,9 @@ import KakeiboKit
 /// `help`, and the MCP tools all get it. Each `run` is on the main actor
 /// with the app's model, and reads the same state the window shows.
 enum AgentCommands {
-    static let all: [AgentCommand] = [
+    static let all: [AgentCommand] = core + AgentSessionCommands.all
+
+    private static let core: [AgentCommand] = [
         AgentCommand(name: "status", summary: "Show whether Kakeibo runs, its login state, and when it last read limits and logs.",
                      example: "kakeibo status --json", readOnly: true) { _, model in
             ["running": true,
@@ -166,15 +168,20 @@ enum AgentCommands {
         return range
     }
 
-    /// A Project path from its folder name, full path, or the start of either.
+    /// A Project path from its folder name, full path, or the start of either,
+    /// among today's Projects (summary, summarize).
     static func findProject(_ text: String, in model: AppModel) throws -> String {
-        let paths = Set(model.usage.todayByProject.map(\.id))
+        try findProject(text, among: model.usage.todayByProject.map(\.id), scope: "active today")
+    }
+
+    static func findProject(_ text: String, among candidates: [String], scope: String) throws -> String {
+        let paths = Set(candidates)
         let needle = text.lowercased()
         let exact = paths.filter { $0.lowercased() == needle || ($0 as NSString).lastPathComponent.lowercased() == needle }
         if exact.count == 1 { return exact.first! }
         let partial = paths.filter { ($0 as NSString).lastPathComponent.lowercased().hasPrefix(needle) }
         guard let first = partial.first else {
-            throw AgentError.notFound("no Project active today matches \"\(text)\". Run `kakeibo today` for today's Projects")
+            throw AgentError.notFound("no Project \(scope) matches \"\(text)\". Run `kakeibo projects --days 30` for names")
         }
         guard partial.count == 1 else {
             throw AgentError.usage("\(partial.count) Projects start with \"\(text)\": \(partial.map { ($0 as NSString).lastPathComponent }.sorted().joined(separator: ", "))")
