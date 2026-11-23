@@ -28,6 +28,17 @@ private enum Pigment {
     static let goldDeep: UInt32 = 0x7F6119
     static let goldDim: UInt32 = 0x6B5935
 
+    // Model series (validated with the dataviz palette checker, light on
+    // paperDeep and dark on lacquerRaised): gold, indigo, matcha, wisteria.
+    static let seriesGoldLight: UInt32 = 0x9A7420
+    static let seriesGoldDark: UInt32 = 0xB08A35
+    static let seriesIndigoLight: UInt32 = 0x2F5DAE
+    static let seriesIndigoDark: UInt32 = 0x4F78C8
+    static let seriesMatchaLight: UInt32 = 0x557A18
+    static let seriesMatchaDark: UInt32 = 0x6F9A2E
+    static let seriesWisteriaLight: UInt32 = 0x7550B4
+    static let seriesWisteriaDark: UInt32 = 0x9470D0
+
     static let seal: UInt32 = 0xB4322A
     static let sealBright: UInt32 = 0xE0685C
     static let sealPaper: UInt32 = 0xF4E9D6
@@ -67,6 +78,23 @@ enum Ink {
     static let onSeal = Color(hex: Pigment.sealPaper)
     static let warning = Color(light: Pigment.seal, dark: Pigment.sealBright)
     static let warningWash = Color(hex: Pigment.seal).opacity(0.16)
+
+    /// One color per model family, in `ModelFamilies.order`. Text never wears
+    /// these; they mark bars and legend swatches only.
+    static func series(_ family: String) -> Color {
+        switch family {
+        case "Fable": Color(light: Pigment.seriesGoldLight, dark: Pigment.seriesGoldDark)
+        case "Opus": Color(light: Pigment.seriesIndigoLight, dark: Pigment.seriesIndigoDark)
+        case "Sonnet": Color(light: Pigment.seriesMatchaLight, dark: Pigment.seriesMatchaDark)
+        case "Haiku": Color(light: Pigment.seriesWisteriaLight, dark: Pigment.seriesWisteriaDark)
+        default: textSoft
+        }
+    }
+
+    /// Heatmap steps 1...4: gold at rising strength; step 0 is `tick`.
+    static func heat(_ step: Int) -> Color {
+        step == 0 ? tick : accent.opacity([0, 0.3, 0.5, 0.75, 1][min(step, 4)])
+    }
 }
 
 /// Layer 3: type roles. Numerals are serif; everything else is the system sans.
@@ -125,6 +153,9 @@ enum Metric {
     static let dashboardWidth: CGFloat = 760
     static let historyEmptyHeight: CGFloat = 320
     static let chartHeight: CGFloat = 120
+    static let dashboardChartHeight: CGFloat = 180
+    static let heatCell: CGFloat = 10
+    static let heatGap: CGFloat = 2
     static let chartDot: CGFloat = 3
     static let titleBarInset: CGFloat = 36
     static let tabHeight: CGFloat = 36

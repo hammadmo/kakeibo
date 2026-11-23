@@ -18,3 +18,8 @@ Gallery: `APP_SNAPSHOT_PAGES=kit tools/snap.sh` writes `kit-gallery-light.png` a
 Windows: the Dashboard (width 760) and Settings (width 520) use Hachibu's `kitWindow` frame
 (`KitWindow.swift`, `Motifs.swift`: wave band and plum sprig) and `KitTabBar` (`Controls.swift`).
 The template's accent picker was removed on 2026-11-23.
+
+Charts (M2): model series in fixed order Fable gold, Opus indigo, Sonnet matcha, Haiku wisteria,
+Other textSoft (`Ink.series`), validated with the dataviz checker in light (on paperDeep) and dark
+(on lacquerRaised). Heatmap: `Ink.heat(0...4)`, accent gold at 30/50/75/100%, `tick` for no activity.
+Legends always show; text never wears a series color.

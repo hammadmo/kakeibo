@@ -136,8 +136,8 @@ Screens: dashboard-light.png, dashboard-dark.png, dashboard-empty-dark.png
 Depends: S-005
 Acceptance:
 - [snap] "Dashboard…" in the popover footer opens one window (Command-D); a second click brings it forward.
-- [snap] No logs at all: "No Claude Code activity yet. Kakeibo reads the logs in ~/.claude/projects."
-Status: todo
+- [snap] No logs at all: "No Claude Code Activity Yet" and "Kakeibo reads the logs in ~/.claude/projects." Never shown before the first read.
+Status: done
 
 ### S-011 See Tokens by day
 As the user, I see a bar chart of Tokens per day and switch between 7 and 30 days.
@@ -145,8 +145,8 @@ Screens: dashboard-dark.png
 Depends: S-010
 Acceptance:
 - [snap] Gold bars, stacked by model, with a "7 Days | 30 Days" segmented control.
-- [snap] Hovering a bar shows the date, Tokens, and Cost for each model.
-Status: todo
+- [manual] Hovering a bar shows the date, Tokens, and Cost for each model.
+Status: done
 
 ### S-012 See this week against last week
 As the user, I compare this week's Tokens and Cost with last week's.
@@ -155,7 +155,7 @@ Depends: S-010
 Acceptance:
 - [snap] A card: "This week 8.1 M · $112" and "↑ 24% vs last week".
 - [unit] Week starts on the locale's first weekday.
-Status: todo
+Status: done
 
 ### S-013 See the split by model
 As the user, I see what share of Tokens each model used.
@@ -163,16 +163,16 @@ Screens: dashboard-dark.png
 Depends: S-011
 Acceptance:
 - [snap] A horizontal split bar (Opus, Sonnet, Fable, Haiku) with percentages; the same model colors as S-011.
-Status: todo
+Status: done
 
 ### S-014 See every Project's totals
 As the user, I see each Project's Tokens, Cost, and last activity in the selected range.
 Screens: dashboard-dark.png
 Depends: S-010
 Acceptance:
-- [snap] A list sorted by Tokens: name, Tokens, Cost, "2 h ago".
+- [snap] A list sorted by Tokens: name, Tokens, Cost, "2 hr ago", with the 7 Days | 30 Days range beside its title.
 - [self] Clicking a column header sorts by it.
-Status: todo
+Status: done
 
 ### S-015 See Limit history
 As the user, I see how Session and Weekly Used % moved over time.
@@ -180,16 +180,17 @@ Screens: dashboard-dark.png
 Depends: S-009, S-010
 Acceptance:
 - [snap] A line chart of stored snapshots, with a dashed line at 100%, for the selected range.
-Status: todo
+Status: done
 
 ### S-016 See the activity heatmap
 As the user, I see a year of daily activity as a grid.
 Screens: dashboard-dark.png
 Depends: S-010
 Acceptance:
-- [snap] 53 × 7 cells in five gold steps; hover shows the date and Tokens.
-- [snap] A Project picker above it filters the grid to one Project.
-Status: todo
+- [snap] 53 × 7 cells in five gold steps.
+- [manual] Hovering a cell shows the date and Tokens.
+- [snap] A Project menu above it ("All Projects") filters the grid to one Project.
+Status: done
 
 ---
 

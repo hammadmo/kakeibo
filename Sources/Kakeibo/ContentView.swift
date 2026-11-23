@@ -35,68 +35,6 @@ struct ContentView: View {
     }
 }
 
-/// The Weekly limit by surface (S-017) and stored limit readings, newest first.
-/// M2's charts join this page.
-struct OverviewPage: View {
-    @Environment(AppModel.self) private var model
-    @Query(sort: \LimitSnapshot.takenAt, order: .reverse) private var snapshots: [LimitSnapshot]
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: Space.xl) {
-            if let breakdown = model.limits.current?.breakdown {
-                WeeklyBySurfaceCard(breakdown: breakdown, weekly: model.limits.current?.weekly)
-            }
-            readings
-        }
-    }
-
-    @ViewBuilder
-    private var readings: some View {
-        if snapshots.isEmpty {
-            KitEmptyState(title: "No Limits Yet",
-                          message: "Kakeibo shows your Session, Weekly, and Fable limits here.")
-        } else {
-            VStack(alignment: .leading, spacing: Space.sm) {
-                Text("Limit readings").kitType(.section).foregroundStyle(Ink.accentText)
-                VStack(spacing: 0) {
-                    ForEach(Array(snapshots.prefix(24).enumerated()), id: \.element.id) { index, snapshot in
-                        if index > 0 { KitDivider() }
-                        row(snapshot)
-                    }
-                }
-                .kitCard()
-            }
-        }
-    }
-
-    private func row(_ snapshot: LimitSnapshot) -> some View {
-        HStack {
-            Text(snapshot.takenAt, format: .dateTime.day().month().hour().minute())
-                .kitType(.meta)
-                .foregroundStyle(Ink.textSoft)
-            Spacer()
-            reading("Session", snapshot.sessionUsed)
-            reading("Weekly", snapshot.weeklyUsed)
-            if let fable = snapshot.fableUsed { reading("Fable", fable) } else { Color.clear.frame(width: 112) }
-        }
-        .padding(.vertical, Space.sm)
-    }
-
-    private func reading(_ name: String, _ value: Double) -> some View {
-        let used = Used(value)
-        return Text("\(name) \(used.label)")
-            .kitType(.label)
-            .foregroundStyle(used.isAlmostReached ? Ink.warning : Ink.text)
-            .frame(width: 112, alignment: .trailing)
-    }
-}
-
-struct ProjectsPage: View {
-    var body: some View {
-        KitEmptyState(title: "No Projects Yet", message: "Kakeibo reads the logs in ~/.claude/projects.")
-    }
-}
-
 /// An empty page: what it is for, centered, in the kit's type.
 struct KitEmptyState: View {
     let title: String

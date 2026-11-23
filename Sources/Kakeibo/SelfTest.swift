@@ -63,6 +63,18 @@ enum SelfTest {
             await model.refreshNow()
             check("Refresh within a minute keeps the last limits", model.limits.updatedAt == lastUpdate)
 
+            // S-014: the header buttons' sorts.
+            let rows = [DashboardData.Project(id: "/a/beta", totals: UsageTotals(tokens: 10, cost: 5, last: .now)),
+                        DashboardData.Project(id: "/a/alpha", totals: UsageTotals(tokens: 30, cost: 1, last: .distantPast))]
+            check("Projects sort by Tokens, Cost, name, and last active",
+                  ProjectSort.tokens.sorted(rows).first?.name == "alpha" && ProjectSort.cost.sorted(rows).first?.name == "beta"
+                    && ProjectSort.name.sorted(rows).first?.name == "alpha" && ProjectSort.last.sorted(rows).first?.name == "beta")
+
+            // S-012: this week against last week, from the fixture logs.
+            let dashboard = await model.usage.dashboard(range: .month)
+            check("the Dashboard reads this week, the model split, and days",
+                  dashboard.thisWeek.tokens > 0 && dashboard.families.count == 3 && !dashboard.byDay.isEmpty)
+
             // S-009: old readings are deleted, recent ones kept.
             let old = LimitSnapshot(sessionUsed: 1, sessionResets: .now, weeklyUsed: 1, weeklyResets: .now)
             old.takenAt = Date.now.addingTimeInterval(-91 * 86_400)

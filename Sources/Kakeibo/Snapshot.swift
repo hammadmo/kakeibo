@@ -79,6 +79,31 @@ enum Snapshot {
                 }
             }
 
+            if wants("dashboard") {
+                // The whole Overview page, past the fold, for the cards below the chart.
+                let loaded = await model.usage.dashboard(range: model.dashboardRange)
+                for (mode, name) in [("light", NSAppearance.Name.aqua), ("dark", .darkAqua)] {
+                    let page = OverviewPage(data: loaded)
+                        .padding(Space.xxl)
+                        .frame(width: Metric.dashboardWidth)
+                        .background(Ink.surface)
+                        .environment(model)
+                        .modelContainer(model.container)
+                        .environment(\.colorScheme, mode == "dark" ? .dark : .light)
+                    NSAppearance(named: name)!.performAsCurrentDrawingAppearance {
+                        let renderer = ImageRenderer(content: page)
+                        renderer.scale = 2
+                        if let tiff = renderer.nsImage?.tiffRepresentation,
+                           let png = NSBitmapImageRep(data: tiff)?.representation(using: .png, properties: [:]) {
+                            let path = "\(dir)/overview-full-\(mode).png"
+                            try? png.write(to: URL(fileURLWithPath: path))
+                            print("SNAPSHOT \(path)")
+                        }
+                    }
+                    try? await Task.sleep(for: .seconds(0.5))
+                }
+            }
+
             if wants("settings") {
                 openWindow(id: SettingsView.windowID)
                 try? await Task.sleep(for: .seconds(1))

@@ -18,6 +18,8 @@ final class UsageService {
     private(set) var todayByProject: [ProjectRow] = []
     private(set) var isReading = false
     private(set) var hasRead = false
+    /// Bumps after each read, so the Dashboard reloads its charts.
+    private(set) var version = 0
     let store: UsageStore
 
     /// Test runs read fixture logs (SeedData writes them), never ~/.claude.
@@ -55,5 +57,6 @@ final class UsageService {
         today = await store.total(from: midnight)
         todayByProject = await store.byProject(from: midnight).map { ProjectRow(id: $0.project, totals: $0.totals) }
         hasRead = true
+        version += 1
     }
 }

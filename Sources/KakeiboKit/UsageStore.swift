@@ -5,17 +5,21 @@ public struct UsageTotals: Equatable, Sendable {
     public var tokens = 0
     public var cost = 0.0
     public var replies = 0
+    /// The newest reply in the slice.
+    public var last: Date?
 
-    public init(tokens: Int = 0, cost: Double = 0, replies: Int = 0) {
+    public init(tokens: Int = 0, cost: Double = 0, replies: Int = 0, last: Date? = nil) {
         self.tokens = tokens
         self.cost = cost
         self.replies = replies
+        self.last = last
     }
 
     mutating func add(_ record: UsageRecord) {
         tokens += record.tokens
         cost += record.cost
         replies += 1
+        if last.map({ record.time > $0 }) ?? true { last = record.time }
     }
 }
 
@@ -107,17 +111,29 @@ public actor UsageStore {
         group(from: start, to: end) { $0.project }
     }
 
-    public func byModelFamily(from start: Date, to end: Date = .distantFuture) -> [(project: String, totals: UsageTotals)] {
-        group(from: start, to: end) { Pricing.family(of: $0.model) }
+    public func byModelFamily(from start: Date, to end: Date = .distantFuture) -> [(family: String, totals: UsageTotals)] {
+        group(from: start, to: end) { Pricing.family(of: $0.model) }.map { ($0.project, $0.totals) }
     }
 
     /// Local calendar days, oldest first; days without activity are omitted.
-    public func byDay(from start: Date, calendar: Calendar = .current) -> [(day: Date, totals: UsageTotals)] {
+    /// `project` limits it to one Project's path.
+    public func byDay(from start: Date, project: String? = nil, calendar: Calendar = .current) -> [(day: Date, totals: UsageTotals)] {
         var days: [Date: UsageTotals] = [:]
-        for r in records where r.time >= start {
+        for r in records where r.time >= start && (project == nil || r.project == project) {
             days[calendar.startOfDay(for: r.time), default: UsageTotals()].add(r)
         }
         return days.sorted { $0.key < $1.key }.map { ($0.key, $0.value) }
+    }
+
+    /// One entry per day and model family, oldest first.
+    public func byDayAndFamily(from start: Date, calendar: Calendar = .current) -> [(day: Date, family: String, totals: UsageTotals)] {
+        var cells: [Date: [String: UsageTotals]] = [:]
+        for r in records where r.time >= start {
+            cells[calendar.startOfDay(for: r.time), default: [:]][Pricing.family(of: r.model), default: UsageTotals()].add(r)
+        }
+        return cells.sorted { $0.key < $1.key }.flatMap { day, families in
+            families.sorted { $0.key < $1.key }.map { (day, $0.key, $0.value) }
+        }
     }
 
     private func group(from start: Date, to end: Date, by key: (UsageRecord) -> String) -> [(project: String, totals: UsageTotals)] {

@@ -57,6 +57,8 @@ final class AppModel {
 
     let limits: LimitsService
     let usage = UsageService()
+    /// The Dashboard's range (7 or 30 days), shared by its charts and lists.
+    var dashboardRange: DashboardRange = .week
 
     /// Starts the limits and usage timers.
     func start() {

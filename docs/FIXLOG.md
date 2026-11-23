@@ -17,3 +17,9 @@ Stage Manager sometimes hands screencapture its strip thumbnail.
 Fix: find windows by their SwiftUI identifier (scene id prefix, "Settings" for Settings), and
 retry a capture narrower than the window's backing width.
 Rule: never find a SwiftUI window by title; check each capture's pixel width.
+
+## The Dashboard flashed "No Claude Code Activity Yet"
+Symptom: the Overview showed its empty state for a moment before the charts.
+Cause: the empty state checked "logs were read" (service-wide) while the page's own data had not loaded yet.
+Fix: `DashboardData.loaded`; the empty state needs loaded && no activity.
+Rule: decide an empty state from the view's own loaded data, never from a global "has read" flag.
