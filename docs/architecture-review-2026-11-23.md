@@ -71,3 +71,9 @@ each tab into its own file under `Settings/`.
 with unit tests. `Digest` and `Timeline` both read prompts and changed files from log lines; they share
 `Digest.promptText`, but each has its own tool_use loop for files. Worth exploring if a third reader appears:
 one `LogLine` parser in KakeiboKit that both use.
+
+## M7 check-in
+6,600 lines; largest files unchanged (301, 286). `AlertService` now calls `SummaryService.summarizeAndWait` for
+the daily Summaries; the dependency is passed in at start, and the self-test drives it through the fake CLI.
+Opening a Project is a small `ProjectOpener` over `NSWorkspace`, with the list of apps in KakeiboKit
+(`OpenTarget`). No new signals; `SettingsView.swift` is the file to split next if Settings grows.
