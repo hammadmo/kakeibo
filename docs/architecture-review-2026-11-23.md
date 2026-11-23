@@ -65,3 +65,9 @@ fix-log area (five entries across snapshots, the Dashboard, Summarize, and notif
 `Preferences` (menu bar, refresh, login item) and `AlertService` (alerts); both use a separate UserDefaults
 suite in test runs. Nothing Strong to do. Worth watching: if Settings grows past a few more rows, move
 each tab into its own file under `Settings/`.
+
+## M6 check-in
+6,300 lines; still no file over 301. Timeline and live sessions are pure (`Timeline`, `UsageStore.liveSessions`)
+with unit tests. `Digest` and `Timeline` both read prompts and changed files from log lines; they share
+`Digest.promptText`, but each has its own tool_use loop for files. Worth exploring if a third reader appears:
+one `LogLine` parser in KakeiboKit that both use.
