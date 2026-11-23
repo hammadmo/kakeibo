@@ -3,6 +3,20 @@
     <channel>
         <title>Kakeibo</title>
         <item>
+            <title>0.3</title>
+            <pubDate>Mon, 23 Nov 2026 16:43:10 +0200</pubDate>
+            <sparkle:version>202611231642</sparkle:version>
+            <sparkle:shortVersionString>0.3</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
+            <description><![CDATA[<ul>
+<li>Summarize my day (Settings &gt; Alerts, off by default): before the daily Alert, Kakeibo summarizes your three busiest projects with Haiku and puts the first Summary in the Alert. It uses a few thousand tokens of your plan for each.</li>
+<li>Open a project in Finder, your terminal (Terminal, iTerm, Ghostty, Warp), or your editor (VS Code, Cursor, Zed, Xcode): the Open menu on the Today page, or the context menu of a project on the Projects page.</li>
+</ul>
+]]></description>
+            <enclosure url="https://github.com/hammadmo/kakeibo/releases/download/v0.3/Kakeibo-0.3.zip" length="4248824" type="application/octet-stream" sparkle:edSignature="kHmDGM1feYdzF2cfIAOApA/qPbb9TCBNPkiluYkh20k+Ftj659a+4VZNzJ8OcWddC6Ms2N9lFx0kWPORyBqDDQ=="/>
+        </item>
+        <item>
             <title>0.2.1</title>
             <pubDate>Mon, 23 Nov 2026 16:18:14 +0200</pubDate>
             <sparkle:version>202611231617</sparkle:version>
@@ -32,24 +46,6 @@
 </ul>
 ]]></description>
             <enclosure url="https://github.com/hammadmo/kakeibo/releases/download/v0.2/Kakeibo-0.2.zip" length="4224232" type="application/octet-stream" sparkle:edSignature="8kBySkaD8j88TYsknH+Udf7/2zpdWVuJTlH7eGqvGSRNR8/msLgVhPd3m1MdL5toslF/J/LDmtp2Epd/OimZAQ=="/>
-        </item>
-        <item>
-            <title>0.1</title>
-            <pubDate>Mon, 23 Nov 2026 13:21:07 +0200</pubDate>
-            <sparkle:version>202611231320</sparkle:version>
-            <sparkle:shortVersionString>0.1</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
-            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
-            <description><![CDATA[<ul>
-<li>Menu bar ensō for the Session limit, with Weekly and Fable in the popover.</li>
-<li>Today's tokens and estimated cost from Claude Code's logs, and the busiest Projects.</li>
-<li>Dashboard: tokens by day and model, this week vs last, Weekly limit by surface, limit history, a year of activity, every Project's totals.</li>
-<li>Summarize a Project's day with Haiku.</li>
-<li>Alerts at 80% and 90%, on reset, and with the daily numbers.</li>
-<li><code>kakeibo</code> CLI and MCP server.</li>
-</ul>
-]]></description>
-            <enclosure url="https://github.com/hammadmo/kakeibo/releases/download/v0.1/Kakeibo-0.1.zip" length="4127634" type="application/octet-stream" sparkle:edSignature="3hh15P2SKse/hA0IMj61KZLuQEpcxDx058Zn3q6QytdW6M5J//qe7uJtRY2v2RXrvyRlL8RViZFwQnf9OlCHCA=="/>
         </item>
     </channel>
 </rss>
