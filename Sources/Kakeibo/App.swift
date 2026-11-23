@@ -21,6 +21,7 @@ struct KakeiboApp: App {
         MenuBarExtra {
             PopoverView()
                 .environment(model)
+                .background(PopoverWindow.Tracker())
         } label: {
             MenuBarLabel()
                 .environment(model)

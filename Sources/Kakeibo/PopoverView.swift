@@ -96,7 +96,10 @@ private struct StatusLine: View {
                 note(status == .expired
                      ? "Your Claude Code login expired. Run claude in Terminal to sign in again."
                      : "Sign in to Claude Code to see your limits: run claude in Terminal, then /login.")
-                Button("Open Terminal") { NSWorkspace.shared.open(URL(fileURLWithPath: "/System/Applications/Utilities/Terminal.app")) }
+                Button("Open Terminal") {
+                    PopoverWindow.close()
+                    NSWorkspace.shared.open(URL(fileURLWithPath: "/System/Applications/Utilities/Terminal.app"))
+                }
                     .buttonStyle(.kit(.secondary))
                     .fixedSize()
             }

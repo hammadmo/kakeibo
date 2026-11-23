@@ -137,7 +137,11 @@ struct PopoverFooter: View {
                 Button("Dashboard…") { Dashboard.open(openWindow) }
                     .keyboardShortcut("d")
                     .help("Open the Dashboard (⌘D)")
-                Button("Settings…") { openWindow(id: SettingsView.windowID); NSApp.activate() }
+                Button("Settings…") {
+                    PopoverWindow.close()
+                    openWindow(id: SettingsView.windowID)
+                    NSApp.activate()
+                }
                     .keyboardShortcut(",")
                 Spacer()
                 Button("Quit Kakeibo") { NSApp.terminate(nil) }
@@ -151,6 +155,7 @@ struct PopoverFooter: View {
 extension Dashboard {
     @MainActor
     static func open(_ openWindow: OpenWindowAction) {
+        PopoverWindow.close()
         openWindow(id: windowID)
         NSApp.activate()
     }
