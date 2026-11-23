@@ -88,6 +88,19 @@ final class AlertService {
 
     // MARK: Notifications
 
+    /// Settings > Alerts > Send Test Alert, and `Kakeibo --test-alert`: asks for
+    /// permission if needed and sends one Alert now. Returns whether it went out.
+    @discardableResult
+    func sendTest() async -> Bool {
+        guard await requestPermissionIfNeeded() else { return false }
+        let content = UNMutableNotificationContent()
+        content.title = "Kakeibo Alerts are on"
+        content.body = "You'll hear from Kakeibo at 80% and 90% of a limit, when it resets, and with the daily numbers."
+        content.sound = .default
+        let request = UNNotificationRequest(identifier: "test", content: content, trigger: nil)
+        return (try? await UNUserNotificationCenter.current().add(request)) != nil
+    }
+
     private func send(_ event: AlertEvent) {
         guard !Store.isOverridden else { sent.append(event); return }
         Task {

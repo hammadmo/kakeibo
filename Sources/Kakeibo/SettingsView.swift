@@ -144,6 +144,11 @@ struct AlertSettings: View {
                 SettingsRow(title: "Limit reset", detail: "When a limit you pushed past 80% goes back to 0%.") {
                     Toggle("Limit reset", isOn: $alerts.resetAlerts).toggleStyle(.kit).labelsHidden()
                 }
+                SettingsRow(title: "Test", detail: "Send one Alert now to check that notifications reach you.") {
+                    Button("Send Test Alert") { Task { await model.alerts.sendTest() } }
+                        .buttonStyle(.kit(.secondary))
+                        .fixedSize()
+                }
                 SettingsRow(title: "Daily numbers", detail: "Today's tokens, cost, and busiest Project, on days with activity.") {
                     HStack(spacing: Space.md) {
                         DatePicker("Time", selection: $alerts.dailyTime, displayedComponents: .hourAndMinute)

@@ -8,6 +8,7 @@ import SwiftUI
 //   APP_SNAPSHOT=<dir> Kakeibo   save a PNG of every sidebar page and Settings tab in light and dark mode, then quit
 //   APP_SEED=1 Kakeibo           fill an empty /tmp store with sample items (tools/snap.sh)
 //   Kakeibo --selftest           run the self-test on a /tmp store and quit with 0 or 1 (tools/selftest.sh)
+//   Kakeibo --test-alert         ask for notification permission, send one Alert, quit
 //   Kakeibo --probe-limits       fetch the real limits once, print window keys and Used %, quit
 //   APP_LIMITS=<fixture> Kakeibo use fixture limits: normal, warning, signedout, offline, empty
 //   APP_GRID=1 Kakeibo           draw the 8 pt grid and the layout probes over the window
@@ -91,6 +92,18 @@ enum PopoverPreview {
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
+        // Kakeibo --test-alert: ask for permission, send one Alert, quit.
+        if CommandLine.arguments.contains("--test-alert") {
+            NSApp.setActivationPolicy(.regular)
+            NSApp.activate()
+            Task { @MainActor in
+                let sent = await AlertService().sendTest()
+                print(sent ? "TEST ALERT sent" : "TEST ALERT not allowed: turn on notifications for Kakeibo in System Settings")
+                try? await Task.sleep(for: .seconds(2))
+                NSApp.terminate(nil)
+            }
+            return
+        }
         // A menu bar app: no Dock icon until the Dashboard or Settings opens.
         // Test runs stay regular so their windows can be captured.
         if Store.isOverridden {

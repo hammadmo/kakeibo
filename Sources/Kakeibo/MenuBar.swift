@@ -90,7 +90,7 @@ enum Startup {
     private static var started = false
 
     static func run(model: AppModel, openWindow: OpenWindowAction) {
-        guard !started else { return }
+        guard !started, !CommandLine.arguments.contains("--test-alert") else { return }
         started = true
         SeedData.insertIfRequested(into: model)
         SeedData.writeLogs()

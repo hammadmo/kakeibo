@@ -280,6 +280,7 @@ Acceptance:
 - [snap] Settings > Alerts: three toggles and the daily time picker.
 - [self] Notification permission is asked when a toggle is turned on or the first Alert is due, never at launch. Test runs record Alerts and never post them.
 - [snap] When notifications are off for Kakeibo, the tab says so with "Open Notifications…".
+- [manual] "Send Test Alert" (and `Kakeibo --test-alert`) sends one real Alert; checked 2026-11-23.
 Status: done
 
 ---

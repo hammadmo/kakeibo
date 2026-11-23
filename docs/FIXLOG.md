@@ -29,3 +29,10 @@ Symptom: when Claude Code failed (limit reached, not logged in), the row showed 
 Cause: an empty stdout was parsed into a generic error, which won over stderr's first line.
 Fix: `SummaryReply.parse` returns no error for empty output; the caller then uses stderr.
 Rule: when a CLI fails, show stderr's own words unless stdout carries a structured error.
+
+## The first test Alert was refused
+Symptom: `--test-alert` printed "not allowed"; `requestAuthorization` failed with "Notifications are not allowed for this application".
+Cause: the first permission prompt was dismissed or declined, so macOS marked Kakeibo as denied and never asks again.
+Fix: the user turned on "Allow notifications" for Kakeibo in System Settings > Notifications; Settings > Alerts shows
+"Open Notifications…" when permission is denied, and "Send Test Alert" checks the path end to end.
+Rule: after a denied notification prompt, send people to System Settings; the app can't ask again.
