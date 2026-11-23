@@ -6,11 +6,14 @@ import SwiftUI
 struct ProjectsPage: View {
     @Environment(AppModel.self) private var model
     @State private var data = DashboardData()
+    /// The Project the heatmap shows; a card or the menu picks it (S-050).
+    @State private var heatProject: String?
 
     var body: some View {
         @Bindable var model = model
         VStack(alignment: .leading, spacing: Space.xl) {
-            ActivityHeatmapCard()
+            ProjectCards(projects: data.projects, selected: $heatProject)
+            ActivityHeatmapCard(project: $heatProject)
             ProjectTable(projects: data.projects, range: $model.dashboardRange)
         }
         .task(id: "\(model.dashboardRange.rawValue)-\(model.usage.version)") {
@@ -119,7 +122,7 @@ private struct ProjectTable: View {
 /// Project or the one picked above it. Hover shows the day and its Tokens.
 private struct ActivityHeatmapCard: View {
     @Environment(AppModel.self) private var model
-    @State private var project: String?
+    @Binding var project: String?
     @State private var projects: [String] = []
     @State private var days: [Date: Int] = [:]
 

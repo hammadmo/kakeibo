@@ -334,10 +334,10 @@ As the user, I see my busiest Projects as cards, each with a small line of its l
 Screens: projects-light.png, projects-dark.png
 Depends: S-014
 Acceptance:
-- [snap] The Projects page opens with up to six cards in a 3-column grid, busiest first in the range: name, Tokens, Cost, "2 hr ago", and a gold sparkline of Tokens per day for the last 14 days.
+- [snap] The Projects page opens with up to six cards in a 3-column grid under "Busiest in the last 7 days · the line is the last 14", busiest first in the range: name, Tokens, Cost, "2 hr ago", and a gold sparkline of Tokens per day for the last 14 days.
 - [unit] The sparkline has one point per day for 14 days, 0 on days without activity.
 - [snap] Clicking a card shows that Project's activity in the heatmap below it (the Project menu follows).
-Status: todo
+Status: done
 UX:
 - Surface: inline cards on the Projects page (information; one click narrows the heatmap).
 - Words: card help "Show this Project's activity"; the selected card has a gold border.
