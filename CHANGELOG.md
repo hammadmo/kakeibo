@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.2.1
+- Fixed: the popover opened with a focus ring around its first button ("+2 more"). It now opens calm; Tab still moves through the buttons.
+
 ## 0.2
 - The Dashboard opens on your usage: Session, Weekly, and Fable gauges with when each resets, and today's tokens, estimated cost, replies, projects, and live sessions.
 - A Today page: each project's sessions today, with times, branch, the first prompt, and how many prompts and files.

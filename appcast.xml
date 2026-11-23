@@ -3,6 +3,19 @@
     <channel>
         <title>Kakeibo</title>
         <item>
+            <title>0.2.1</title>
+            <pubDate>Mon, 23 Nov 2026 16:18:14 +0200</pubDate>
+            <sparkle:version>202611231617</sparkle:version>
+            <sparkle:shortVersionString>0.2.1</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
+            <description><![CDATA[<ul>
+<li>Fixed: the popover opened with a focus ring around its first button ("+2 more"). It now opens calm; Tab still moves through the buttons.</li>
+</ul>
+]]></description>
+            <enclosure url="https://github.com/hammadmo/kakeibo/releases/download/v0.2.1/Kakeibo-0.2.1.zip" length="4224567" type="application/octet-stream" sparkle:edSignature="GN95jGVNXyvMs7Q2eKqDkKUaEOYJzQCH7WADuiDxGDsjMW5jSxUtISi17iiLy2M+mW4gZXPqojdH3nJKrB7iBg=="/>
+        </item>
+        <item>
             <title>0.2</title>
             <pubDate>Mon, 23 Nov 2026 15:58:18 +0200</pubDate>
             <sparkle:version>202611231557</sparkle:version>
