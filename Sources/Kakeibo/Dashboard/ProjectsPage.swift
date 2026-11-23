@@ -114,6 +114,8 @@ private struct ProjectTable: View {
                 .frame(width: Self.lastWidth, alignment: .trailing)
         }
         .padding(.vertical, Space.sm)
+        .contentShape(Rectangle())
+        .contextMenu { OpenProjectItems(path: project.id) }
         .accessibilityElement(children: .combine)
     }
 }

@@ -193,6 +193,11 @@ enum SelfTest {
             check("a failed Summary never holds back the daily Alert", alerts.sent.count == sentBefore + 1 && alerts.lastBody == nil)
             unsetenv("APP_CLAUDE")
 
+            // S-061: open a Project's folder; a missing folder can't be opened.
+            check("a missing Project folder shows the Open items disabled",
+                  !ProjectOpener.canOpen("/Users/me/Projects/Kakeibo") && ProjectOpener.canOpen(NSHomeDirectory())
+                    && ProjectOpener.targets.finder == .finder)
+
             // S-009: old readings are deleted, recent ones kept.
             let old = LimitSnapshot(sessionUsed: 1, sessionResets: .now, weeklyUsed: 1, weeklyResets: .now)
             old.takenAt = Date.now.addingTimeInterval(-91 * 86_400)

@@ -76,6 +76,7 @@ private struct ProjectCard: View {
             .contentShape(RoundedRectangle(cornerRadius: Metric.cardRadius))
         }
         .buttonStyle(.plain)
+        .contextMenu { OpenProjectItems(path: project.id) }
         .help("Show this Project's activity")
         .accessibilityLabel("\(project.name), \(Format.spokenTokens(project.totals.tokens)), \(Format.cost(project.totals.cost)), \(lastActive)")
         .accessibilityAddTraits(isSelected ? .isSelected : [])

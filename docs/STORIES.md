@@ -419,7 +419,7 @@ Acceptance:
 - [manual] The same items are in the context menu of Project rows and cards on the Projects page.
 - [unit] Only installed apps are listed, Finder always first.
 - [self] A folder that no longer exists shows the items disabled, with "This folder no longer exists".
-Status: todo
+Status: done
 UX:
 - Surface: a kit pull-down beside the Project name (Today), and context menus (Projects page).
 - Words: "Open ▾"; items "Open in Finder", "Open in Terminal", …; help "Open this Project's folder".

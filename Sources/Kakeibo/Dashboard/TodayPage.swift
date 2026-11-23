@@ -14,8 +14,11 @@ struct TodayPage: View {
             }
             ForEach(projects, id: \.project) { entry in
                 DashboardCard(title: (entry.project as NSString).lastPathComponent) {
-                    Text("\(entry.sessions.count) \(entry.sessions.count == 1 ? "session" : "sessions")")
-                        .kitType(.meta).foregroundStyle(Ink.textSoft)
+                    HStack(spacing: Space.md) {
+                        Text("\(entry.sessions.count) \(entry.sessions.count == 1 ? "session" : "sessions")")
+                            .kitType(.meta).foregroundStyle(Ink.textSoft)
+                        OpenProjectMenu(path: entry.project)
+                    }
                 } content: {
                     VStack(spacing: 0) {
                         ForEach(Array(entry.sessions.reversed().enumerated()), id: \.element.id) { index, session in
