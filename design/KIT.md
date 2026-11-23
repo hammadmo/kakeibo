@@ -23,3 +23,10 @@ Charts (M2): model series in fixed order Fable gold, Opus indigo, Sonnet matcha,
 Other textSoft (`Ink.series`), validated with the dataviz checker in light (on paperDeep) and dark
 (on lacquerRaised). Heatmap: `Ink.heat(0...4)`, accent gold at 30/50/75/100%, `tick` for no activity.
 Legends always show; text never wears a series color.
+
+## App icon
+`Icon/AppIcon.icon` starts from Hachibu's layers (brush ring, dust, plum blossoms, waves on lacquer), so the
+family matches. The difference is the seal: a larger vermilion stamp sits inside the ensō (248 pt, -5°),
+with 家 drawn as outline paths from Hiragino Mincho W6 by `tools/seal_glyph.swift` (no text in icons).
+At 16 pt it reads as a red square in a gold ring, unlike Hachibu's ring with a corner seal.
+Review sheet: `design/app-icon-review.png` (`tools/icon_review.sh`).

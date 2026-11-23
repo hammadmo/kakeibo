@@ -314,8 +314,8 @@ Status: todo
 ### S-043 App icon with the 家 Seal
 As the user, I see Kakeibo's own icon in the Dock and Settings.
 Acceptance:
-- [snap] An Icon Composer icon: open gold ensō on lacquer with the vermilion 家 Seal, reviewed in every look.
-Status: todo
+- [snap] An Icon Composer icon: open gold ensō on lacquer with the vermilion 家 Seal inside it, reviewed in every look (design/app-icon-review.png).
+Status: done
 
 ### S-044 Quit
 As the user, I quit Kakeibo from the popover.
