@@ -98,6 +98,13 @@ The pictures show sample data, not a real account.
 4. For Alerts, allow notifications when macOS asks (or in Settings > Alerts >
    Send Test Alert).
 
+Or install it with [Homebrew](https://brew.sh), in place of steps 1 and 2. This also puts
+the [`kakeibo` command](#the-kakeibo-command) on your PATH:
+
+```bash
+brew install --cask hammadmo/tap/kakeibo
+```
+
 The download is signed with a Developer ID and notarized by Apple.
 
 What changed in each version is in [CHANGELOG.md](CHANGELOG.md).
@@ -106,7 +113,7 @@ What changed in each version is in [CHANGELOG.md](CHANGELOG.md).
 
 The app binary is also a command line tool. Each command asks the running app,
 so the numbers match what the menu bar shows. If Kakeibo is closed, the command
-opens it in the background.
+opens it in the background. Homebrew links it for you; with a manual install, link it once:
 
 ```bash
 mkdir -p ~/.local/bin && ln -sf /Applications/Kakeibo.app/Contents/MacOS/Kakeibo ~/.local/bin/kakeibo
@@ -177,6 +184,9 @@ defaults delete app.kakeibo.mac
 ```
 
 If you registered the MCP server: `claude mcp remove kakeibo`.
+
+With Homebrew, `brew uninstall --cask kakeibo` replaces steps 2 and 3 (add `--zap` to also
+remove its data).
 
 ## Build from source
 
