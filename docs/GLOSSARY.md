@@ -21,4 +21,5 @@ One name for each thing. Used in buttons, menus, titles, tooltips, errors, and V
 | Dashboard | The full window with charts and projects | main window, stats |
 | Summary | Two lines from Claude about a project's day | recap, digest, report |
 | Summarize | Ask Claude for a Summary | generate, analyze |
+| Summarize Again | Replace today's Summary with a new one | regenerate, refresh |
 | Alert | A macOS notification Kakeibo sends | warning, push |

@@ -14,6 +14,11 @@
   (test runs open the Dashboard, so they never depend on the menu bar having room).
 - `DesignKit/`: Hachibu's kit (`Ink`, `KitType`, `Metric`, `EnsoGauge`, buttons) + `kitCard()`. See design/KIT.md.
 
+## Summary (M3)
+`SummaryService` builds a `Digest` (KakeiboKit) from the Project's own log files (`UsageStore.files(of:)`) and
+`git log`, then runs `claude -p --model haiku --output-format json --no-session-persistence --tools ""` off the main
+thread (`ClaudeCLI`). One `Summary` (SwiftData) per Project and day. Tests point `APP_CLAUDE` at a fake CLI.
+
 ## Threading
 Log parsing runs in the `UsageStore` actor, files in a task group. Network uses URLSession async.
 Everything else is main actor.

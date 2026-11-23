@@ -30,6 +30,8 @@ public actor UsageStore {
     private var offsets: [String: UInt64] = [:]
     private var seen: Set<String> = []
     public private(set) var records: [UsageRecord] = []
+    /// Which log files hold each Project's replies, for the Summary digest.
+    private var filesByProject: [String: Set<String>] = [:]
 
     public init(root: URL = FileManager.default.homeDirectoryForCurrentUser.appending(path: ".claude/projects")) {
         self.root = root
@@ -55,8 +57,9 @@ public actor UsageStore {
         }
         for (path, start, read) in results {
             offsets[path] = start + read.consumed
-            for record in read.records where seen.insert(record.key).inserted {
-                records.append(record)
+            for record in read.records {
+                filesByProject[record.project, default: []].insert(path)
+                if seen.insert(record.key).inserted { records.append(record) }
             }
         }
         return records.count - before
@@ -97,6 +100,11 @@ public actor UsageStore {
     private static func projectName(for url: URL) -> String {
         let folder = url.deletingLastPathComponent().lastPathComponent
         return folder.replacingOccurrences(of: "-", with: "/")
+    }
+
+    /// The log files that hold a Project's replies.
+    public func files(of project: String) -> [URL] {
+        (filesByProject[project] ?? []).sorted().map { URL(fileURLWithPath: $0) }
     }
 
     // MARK: Summaries

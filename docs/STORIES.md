@@ -216,31 +216,32 @@ UX:
 
 ### S-020 Summarize a Project's day
 As the user, I press Summarize on a Project and get two lines from Claude about what we did.
-Screens: summary-dark.png
+Screens: projects-light.png, projects-dark.png
 Depends: S-014
 Acceptance:
 - [unit] The digest holds only Today's user prompts (first 200 chars each), touched file names, and git commits, capped at 6,000 tokens.
-- [self] Runs `claude -p --model haiku` off the main thread; the row shows a spinner and Cancel.
-- [snap] The Summary shows under the Project row with "Summarized 14:20 · 4.1 k tokens".
-Status: todo
+- [self] Runs `claude -p --model haiku --no-session-persistence --tools ""` off the main thread (so a Summary never shows up as a Project); the row shows a spinner and Cancel, and Cancel stops it.
+- [snap] Before a Summary, a small gold "Summarize" sits after the Project's name, only for Projects active today.
+- [snap] The Summary shows under the Project row with "Summarized 2:56 AM · 4.1 k tokens".
+Status: done
 
 ### S-021 Keep and redo a Summary
 As the user, I see the last Summary again later and can run it again.
-Screens: summary-dark.png
+Screens: projects-light.png, projects-dark.png
 Depends: S-020
 Acceptance:
-- [unit] Summaries are stored per Project and day.
+- [self] Summaries are stored per Project and day; Summarize Again replaces today's.
 - [snap] An existing Summary shows a "Summarize Again" button.
-Status: todo
+Status: done
 
 ### S-022 Explain when Summarize can't run
 As the user, I'm told why Summarize failed and how to fix it.
-Screens: summary-dark.png
+Screens: projects-light.png, projects-dark.png
 Depends: S-020
 Acceptance:
-- [unit] `claude` not found → "Unable to find Claude Code. Install it, then try again."
-- [unit] Limit reached or a non-zero exit → the CLI's first error line, and the button stays enabled.
-Status: todo
+- [self] `claude` not found → "Unable to find Claude Code. Install it, then try again."
+- [self] Limit reached or a non-zero exit → the CLI's first error line (stderr when stdout is empty), and "Try Again" stays enabled.
+Status: done
 
 ---
 

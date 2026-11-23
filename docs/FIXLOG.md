@@ -23,3 +23,9 @@ Symptom: the Overview showed its empty state for a moment before the charts.
 Cause: the empty state checked "logs were read" (service-wide) while the page's own data had not loaded yet.
 Fix: `DashboardData.loaded`; the empty state needs loaded && no activity.
 Rule: decide an empty state from the view's own loaded data, never from a global "has read" flag.
+
+## Summarize said "Claude Code gave no answer" instead of the real error
+Symptom: when Claude Code failed (limit reached, not logged in), the row showed a generic message.
+Cause: an empty stdout was parsed into a generic error, which won over stderr's first line.
+Fix: `SummaryReply.parse` returns no error for empty output; the caller then uses stderr.
+Rule: when a CLI fails, show stderr's own words unless stdout carries a structured error.

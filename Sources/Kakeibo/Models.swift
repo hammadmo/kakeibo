@@ -57,6 +57,7 @@ final class AppModel {
 
     let limits: LimitsService
     let usage = UsageService()
+    let summaries: SummaryService
     /// The Dashboard's range (7 or 30 days), shared by its charts and lists.
     var dashboardRange: DashboardRange = .week
 
@@ -76,5 +77,6 @@ final class AppModel {
     init(container: ModelContainer) {
         self.container = container
         self.limits = LimitsService(container: container)
+        self.summaries = SummaryService(container: container, usage: usage)
     }
 }

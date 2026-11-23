@@ -75,6 +75,48 @@ enum SelfTest {
             check("the Dashboard reads this week, the model split, and days",
                   dashboard.thisWeek.tokens > 0 && dashboard.families.count == 3 && !dashboard.byDay.isEmpty)
 
+            // S-020 to S-022: Summarize through a fake Claude Code CLI (no tokens spent).
+            let kakeibo = "/Users/me/Projects/Kakeibo"
+            let fake = "/tmp/Kakeibo-fake-claude"
+            func fakeCLI(_ script: String) {
+                try? ("#!/bin/sh\ncat > /dev/null\n" + script).write(toFile: fake, atomically: true, encoding: .utf8)
+                chmod(fake, 0o755)
+                setenv("APP_CLAUDE", fake, 1)
+            }
+            @MainActor func summarize() async {
+                model.summaries.summarize(kakeibo)
+                while model.summaries.isRunning(kakeibo) { try? await Task.sleep(for: .milliseconds(50)) }
+            }
+            func todaysSummaries() -> [Summary] {
+                let day = Calendar.current.startOfDay(for: .now)
+                return ((try? context.fetch(FetchDescriptor<Summary>())) ?? []).filter { $0.project == kakeibo && $0.day == day }
+            }
+            fakeCLI(#"echo '{"type":"result","is_error":false,"result":"Built the heatmap. Fixed snapshots.","usage":{"input_tokens":2,"output_tokens":40,"cache_creation_input_tokens":4000,"cache_read_input_tokens":100}}'"#)
+            await summarize()
+            check("Summarize stores today's Summary with its tokens",
+                  model.summaries.today(kakeibo)?.text == "Built the heatmap. Fixed snapshots." && model.summaries.today(kakeibo)?.tokens == 4142,
+                  model.summaries.errors[kakeibo] ?? "")
+            await summarize()
+            check("Summarize Again keeps one Summary per Project and day", todaysSummaries().count == 1)
+
+            fakeCLI("echo 'Claude usage limit reached.' >&2\nexit 1")
+            await summarize()
+            check("a failed run shows the CLI's first error line",
+                  model.summaries.errors[kakeibo] == "Claude usage limit reached." && !model.summaries.isRunning(kakeibo),
+                  model.summaries.errors[kakeibo] ?? "nil")
+
+            setenv("APP_CLAUDE", "/tmp/Kakeibo-no-such-claude", 1)
+            await summarize()
+            check("a missing CLI says how to fix it",
+                  model.summaries.errors[kakeibo] == "Unable to find Claude Code. Install it, then try again.")
+
+            fakeCLI("sleep 30")
+            model.summaries.summarize(kakeibo)
+            try? await Task.sleep(for: .milliseconds(200))
+            model.summaries.cancel(kakeibo)
+            check("Cancel stops a run", !model.summaries.isRunning(kakeibo))
+            unsetenv("APP_CLAUDE")
+
             // S-009: old readings are deleted, recent ones kept.
             let old = LimitSnapshot(sessionUsed: 1, sessionResets: .now, weeklyUsed: 1, weeklyResets: .now)
             old.takenAt = Date.now.addingTimeInterval(-91 * 86_400)

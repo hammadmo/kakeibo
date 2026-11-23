@@ -35,9 +35,12 @@ enum ProjectSort: String, CaseIterable {
 
 /// S-014: name, Tokens, Cost, last activity. Most Tokens first.
 private struct ProjectTable: View {
+    @Environment(AppModel.self) private var model
     let projects: [DashboardData.Project]
     @Binding var range: DashboardRange
     @State private var sort = ProjectSort.tokens
+
+    private var activeToday: Set<String> { Set(model.usage.todayByProject.map(\.id)) }
 
     private static let numberWidth: CGFloat = 96
     private static let lastWidth: CGFloat = 112
@@ -68,6 +71,7 @@ private struct ProjectTable: View {
                 ForEach(Array(sort.sorted(projects).enumerated()), id: \.element.id) { index, project in
                     if index > 0 { KitDivider() }
                     row(project)
+                    ProjectSummaryArea(project: project.id, activeToday: activeToday.contains(project.id))
                 }
             }
     }
@@ -90,9 +94,12 @@ private struct ProjectTable: View {
 
     private func row(_ project: DashboardData.Project) -> some View {
         HStack(spacing: Space.sm) {
-            Text(project.name).kitType(.body).foregroundStyle(Ink.text)
-                .lineLimit(1).truncationMode(.middle).help(project.id)
-                .frame(maxWidth: .infinity, alignment: .leading)
+            HStack(spacing: Space.md) {
+                Text(project.name).kitType(.body).foregroundStyle(Ink.text)
+                    .lineLimit(1).truncationMode(.middle).help(project.id)
+                SummarizeButton(project: project.id, activeToday: activeToday.contains(project.id))
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
             Text(Format.tokens(project.totals.tokens)).kitType(.label).foregroundStyle(Ink.text)
                 .monospacedDigit()
                 .frame(width: Self.numberWidth, alignment: .trailing)
