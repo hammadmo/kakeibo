@@ -322,8 +322,8 @@ As the user, I quit Kakeibo from the popover.
 Screens: popover-dark.png
 Acceptance:
 - [snap] Footer reads "Dashboard…  Settings…  Quit Kakeibo", like Hachibu.
-- [self] Command-Q in the popover quits.
-Status: todo
+- [manual] Command-Q in the popover quits (the Quit Kakeibo button carries ⌘Q).
+Status: done
 
 ---
 
