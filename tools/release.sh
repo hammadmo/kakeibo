@@ -21,8 +21,13 @@ zip="$dist/Kakeibo-$version.zip"
 ditto -c -k --keepParent "$HOME/Applications/Kakeibo.app" "$zip"
 
 # The version's changes, as HTML for the update window.
+# Escape &, <, and > first, so changelog text never becomes markup; then
+# `code` becomes <code>code</code>, and "- item" lines become list items.
 awk -v v="## $version" '$0==v {on=1; next} /^## / && on {exit} on' "$here/CHANGELOG.md" |
-  sed -E 's/^- (.*)$/<li>\1<\/li>/' | { echo "<ul>"; grep "<li>"; echo "</ul>"; } > "$dist/Kakeibo-$version.html"
+  sed -E -e 's/&/\&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/g' \
+         -e 's/`([^`]+)`/<code>\1<\/code>/g' \
+         -e 's/^- (.*)$/<li>\1<\/li>/' |
+  { echo "<ul>"; grep "<li>"; echo "</ul>"; } > "$dist/Kakeibo-$version.html"
 
 "$HOME/Library/Developer/Kakeibo/build/artifacts/sparkle/Sparkle/bin/generate_appcast" --account kakeibo --maximum-deltas 0 \
   --download-url-prefix "https://github.com/hammadmo/kakeibo/releases/download/v$version/" -o "$here/appcast.xml" "$dist"
