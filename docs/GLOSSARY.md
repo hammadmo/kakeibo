@@ -15,6 +15,9 @@ One name for each thing. Used in buttons, menus, titles, tooltips, errors, and V
 | Surface | Where Claude was used: Claude Code, Chats, Cowork, Other (Anthropic's names) | app, product, channel |
 | Project | A folder Claude Code worked in | repo, workspace |
 | Today | Since local midnight | last 24 h |
+| Session | One Claude Code conversation (a session id in the logs) | chat, thread, run |
+| Live | A session whose newest reply is under 5 minutes old | active, running, online |
+| Timeline | Today's sessions per Project, in time order | log, history, feed |
 | Gauge | The ensō ring that shows one limit | meter, dial, progress |
 | Seal | The vermilion 家 mark; it turns on at 90% Used | badge |
 | Refresh | Fetch limits and re-read logs now | reload, sync |

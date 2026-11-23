@@ -327,10 +327,57 @@ Status: done
 
 ---
 
+## M6 Projects up close
+
+### S-050 See Project cards with sparklines
+As the user, I see my busiest Projects as cards, each with a small line of its last 14 days.
+Screens: projects-light.png, projects-dark.png
+Depends: S-014
+Acceptance:
+- [snap] The Projects page opens with up to six cards in a 3-column grid, busiest first in the range: name, Tokens, Cost, "2 hr ago", and a gold sparkline of Tokens per day for the last 14 days.
+- [unit] The sparkline has one point per day for 14 days, 0 on days without activity.
+- [snap] Clicking a card shows that Project's activity in the heatmap below it (the Project menu follows).
+Status: todo
+UX:
+- Surface: inline cards on the Projects page (information; one click narrows the heatmap).
+- Words: card help "Show this Project's activity"; the selected card has a gold border.
+- States: no Projects in the range → the cards hide (the list below says why).
+- Access: each card reads "Kakeibo, 2.06 million tokens, $3.07, active 2 hours ago"; it is a button.
+
+### S-051 See today's timeline
+As the user, I see what happened today in each Project: sessions, what I asked, files changed, and the branch.
+Screens: today-light.png, today-dark.png
+Depends: S-002
+Acceptance:
+- [unit] From today's log lines, each session becomes one entry: start and end time, the branch, its first prompt (first 120 characters), the number of prompts, and the files changed.
+- [snap] A "Today" page in the Dashboard, one section per Project (busiest first), each session a row: "09:12–10:40 · main", the first prompt, and "6 prompts · 4 files".
+- [snap] No activity today: "Nothing yet today" and "Sessions show here as Claude Code works."
+Status: todo
+UX:
+- Surface: a Dashboard page (a place people come back to).
+- Words: page "Today"; row meta "6 prompts · 4 files"; branch shown as-is; help on the files count lists the names.
+- States: empty as above; a session still running shows "now" as its end time.
+- Access: each row reads its times, branch, prompt, and counts in one sentence.
+
+### S-052 See live sessions
+As the user, I see which Claude Code sessions are running now and how many tokens each has used.
+Screens: popover-dark.png, today-dark.png
+Depends: S-002
+Acceptance:
+- [unit] A session is live when its newest reply is under 5 minutes old.
+- [snap] The popover shows a "Live now" row under Today: a pulsing gold dot, the Project, and the session's Tokens; up to two, then "+N more".
+- [snap] The Today page marks live sessions with the same dot and "now".
+- [self] Live sessions update with every log read (each minute).
+Status: todo
+UX:
+- Surface: inline row in the popover, and the Today page.
+- Words: "Live now"; help "Claude Code replied in this session in the last 5 minutes".
+- States: none live → the row hides.
+- Access: "Live now: Kakeibo, 412 thousand tokens this session"; the pulse respects Reduce Motion (a still dot).
+
+---
+
 ## Later
-- Project cards with sparklines
-- A timeline of today per Project (prompts, files, branch)
-- Live sessions running now
 - Automatic Summaries with the daily Alert
 - Open a Project in Finder, Terminal, or VS Code
 
