@@ -59,12 +59,14 @@ final class AppModel {
     let usage = UsageService()
     let summaries: SummaryService
     let alerts = AlertService()
+    let preferences = Preferences()
     /// The Dashboard's range (7 or 30 days), shared by its charts and lists.
     var dashboardRange: DashboardRange = .week
 
     /// Starts the limits and usage timers.
     func start() {
         limits.onReading = { [alerts] in alerts.observe($0) }
+
         limits.start()
         usage.start()
         alerts.start(usage: usage)
@@ -81,5 +83,10 @@ final class AppModel {
         self.container = container
         self.limits = LimitsService(container: container)
         self.summaries = SummaryService(container: container, usage: usage)
+        limits.interval = .seconds(preferences.refreshMinutes * 60)
+        preferences.onRefreshChange = { [limits, preferences] in
+            limits.interval = .seconds(preferences.refreshMinutes * 60)
+            if limits.isRunning { limits.start() }
+        }
     }
 }

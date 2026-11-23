@@ -43,6 +43,8 @@ final class LimitsService {
         return Store.isOverridden && !LimitsProbe.requested ? "normal" : nil
     }
 
+    var isRunning: Bool { timer != nil }
+
     func start() {
         timer?.cancel()
         timer = Task { [weak self] in

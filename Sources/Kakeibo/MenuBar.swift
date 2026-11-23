@@ -10,8 +10,10 @@ struct MenuBarLabel: View {
     @Environment(\.openWindow) private var openWindow
 
     var body: some View {
-        let session = model.limits.current?.session
-        Image(nsImage: MenuBarGlyph.image(used: session.map { Used($0.used) }))
+        let limits = model.limits.current
+        let session = limits?.session
+        Image(nsImage: MenuBarGlyph.image(style: model.preferences.menuBarStyle, session: session.map { Used($0.used) },
+                                          second: MenuBarGlyph.second(model.preferences.menuBarStyle, limits)))
             .accessibilityElement(children: .ignore)
             // Only the label reaches VoiceOver for a menu bar item, so the value goes in it.
             .accessibilityLabel(MenuBarGlyph.spoken(session))
@@ -30,13 +32,34 @@ enum MenuBarGlyph {
     private static let font = NSFont.monospacedDigitSystemFont(ofSize: 12, weight: .medium)
 
     /// Room for "100%", so 9% and 100% take the same space.
-    private static var textWidth: CGFloat {
+    private static var slot: CGFloat {
         ceil(("100%" as NSString).size(withAttributes: [.font: font]).width)
     }
+    private static let separator = " · "
+    private static var separatorWidth: CGFloat {
+        ceil((separator as NSString).size(withAttributes: [.font: font]).width)
+    }
 
-    static func image(used: Used?) -> NSImage {
-        let warning = used?.isAlmostReached ?? false
-        let size = NSSize(width: ring + gap + textWidth, height: height)
+    /// The second number a style shows: Weekly or Fable.
+    static func second(_ style: MenuBarStyle, _ limits: Limits?) -> Used? {
+        switch style {
+        case .sessionWeekly: limits?.weekly.map { Used($0.used) }
+        case .sessionFable: limits?.fable.map { Used($0.used) }
+        default: nil
+        }
+    }
+
+    /// The ring (Session) and, by style, no number, Session, or Session and a
+    /// second limit. Each style keeps one width whatever the numbers are.
+    static func image(style: MenuBarStyle = .session, session: Used?, second: Used? = nil) -> NSImage {
+        let texts: [Used?] = switch style {
+        case .gaugeOnly: []
+        case .session: [session]
+        case .sessionWeekly, .sessionFable: [session, second]
+        }
+        let warning = ([session] + texts).contains { $0?.isAlmostReached ?? false }
+        let textWidth = texts.isEmpty ? 0 : CGFloat(texts.count) * slot + CGFloat(texts.count - 1) * separatorWidth
+        let size = NSSize(width: ring + (texts.isEmpty ? 0 : gap + textWidth), height: height)
         let image = NSImage(size: size, flipped: false) { _ in
             let color: NSColor = warning ? NSColor(hex: 0xE0685C) : .black
             let center = NSPoint(x: ring / 2, y: height / 2)
@@ -49,9 +72,9 @@ enum MenuBarGlyph {
             color.withAlphaComponent(warning ? 0.35 : 0.3).setStroke()
             track.stroke()
 
-            // The brush: clockwise from 12 o'clock, thick where it lands.
-            if let used, used.percent > 0 {
-                let sweep = 360 * used.percent / 100
+            // The brush: clockwise from 12 o'clock.
+            if let session, session.percent > 0 {
+                let sweep = 360 * session.percent / 100
                 let arc = NSBezierPath()
                 arc.appendArc(withCenter: center, radius: radius, startAngle: 90, endAngle: 90 - sweep, clockwise: true)
                 arc.lineWidth = 2.6
@@ -60,12 +83,21 @@ enum MenuBarGlyph {
                 arc.stroke()
             }
 
-            let text = used?.label ?? "–"
             let attributes: [NSAttributedString.Key: Any] = [.font: font, .foregroundColor: color]
-            let textSize = (text as NSString).size(withAttributes: attributes)
-            // Right-aligned in its fixed slot, so the digits stay put.
-            (text as NSString).draw(at: NSPoint(x: size.width - textSize.width, y: (height - textSize.height) / 2),
-                                    withAttributes: attributes)
+            let y = (height - font.pointSize - 3) / 2
+            func width(_ text: String) -> CGFloat { (text as NSString).size(withAttributes: attributes).width }
+            // The first number ends at its slot's right edge and the second starts
+            // right after the dot, so they read as a pair; the image width never changes.
+            let firstEnd = ring + gap + slot
+            if let first = texts.first {
+                let text = first?.label ?? "–"
+                (text as NSString).draw(at: NSPoint(x: firstEnd - width(text), y: y), withAttributes: attributes)
+            }
+            if texts.count > 1 {
+                (separator as NSString).draw(at: NSPoint(x: firstEnd, y: y), withAttributes: attributes)
+                let text = texts[1]?.label ?? "–"
+                (text as NSString).draw(at: NSPoint(x: firstEnd + separatorWidth, y: y), withAttributes: attributes)
+            }
             return true
         }
         image.isTemplate = !warning

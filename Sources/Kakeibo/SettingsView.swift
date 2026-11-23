@@ -51,16 +51,34 @@ struct GeneralSettings: View {
     @Environment(AppModel.self) private var model
 
     var body: some View {
+        let preferences = model.preferences
         VStack(alignment: .leading, spacing: Space.xl) {
+            SettingsSection(title: "Menu Bar") {
+                SettingsRow(title: "Show", detail: "The ring always shows the Session limit.") {
+                    KitMenu(selection: preferences.menuBarStyle.title,
+                            options: MenuBarStyle.allCases.map { style in (style.title, { preferences.menuBarStyle = style }) })
+                        .accessibilityLabel("Menu bar shows")
+                }
+                SettingsRow(title: "Open at Login", detail: preferences.loginError) {
+                    Toggle("Open at Login", isOn: Binding(get: { preferences.openAtLogin },
+                                                          set: { preferences.setOpenAtLogin($0) }))
+                        .toggleStyle(.kit).labelsHidden()
+                }
+            }
             SettingsSection(title: "Limits") {
                 SettingsRow(title: "Claude Code login",
                             detail: "Kakeibo reads the login Claude Code keeps in your Keychain to fetch your limits.") {
                     StatusPill(text: loginText, tone: loginTone)
                 }
-                SettingsRow(title: "Refresh", detail: "Limits every 5 minutes, logs every minute.") {
-                    Button("Refresh Now") { Task { await model.refreshNow() } }
-                        .buttonStyle(.kit(.secondary))
-                        .fixedSize()
+                SettingsRow(title: "Refresh every", detail: "Logs are read every minute.") {
+                    HStack(spacing: Space.md) {
+                        KitMenu(selection: minutes(preferences.refreshMinutes),
+                                options: Preferences.refreshChoices.map { m in (minutes(m), { preferences.refreshMinutes = m }) })
+                            .accessibilityLabel("Refresh limits every")
+                        Button("Refresh Now") { Task { await model.refreshNow() } }
+                            .buttonStyle(.kit(.secondary))
+                            .fixedSize()
+                    }
                 }
             }
             SettingsSection(title: "Usage") {
@@ -73,7 +91,10 @@ struct GeneralSettings: View {
                 }
             }
         }
+        .onAppear { preferences.refreshLoginState() }
     }
+
+    private func minutes(_ m: Int) -> String { m == 1 ? "1 minute" : "\(m) minutes" }
 
     private var loginText: String {
         switch model.limits.status {
@@ -162,5 +183,30 @@ struct AlertSettings: View {
             }
         }
         .task { await model.alerts.refreshPermission() }
+    }
+}
+
+/// A pull-down in the kit's look: the chosen value in gold with a chevron.
+struct KitMenu: View {
+    let selection: String
+    let options: [(title: String, action: () -> Void)]
+
+    var body: some View {
+        Menu {
+            ForEach(options.indices, id: \.self) { index in
+                Button(options[index].title, action: options[index].action)
+            }
+        } label: {
+            HStack(spacing: Space.xs) {
+                Text(selection)
+                Image(systemName: "chevron.down").font(.system(size: 8, weight: .semibold))
+            }
+            .kitType(.labelStrong)
+            .foregroundStyle(Ink.accentText)
+        }
+        .menuStyle(.button)
+        .buttonStyle(.plain)
+        .menuIndicator(.hidden)
+        .fixedSize()
     }
 }

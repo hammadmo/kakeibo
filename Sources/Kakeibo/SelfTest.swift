@@ -1,4 +1,5 @@
 import AppKit
+import ServiceManagement
 import SwiftData
 import KakeiboKit
 
@@ -138,6 +139,20 @@ enum SelfTest {
             check("the daily Alert goes out once with today's numbers",
                   alerts.sent.filter { $0.identifier == "daily" }.count == 1
                     && alerts.sent.last?.title().hasPrefix("Today: 1.24 M tokens") == true, alerts.sent.last?.title() ?? "")
+
+            // S-040 to S-042: Settings > General.
+            let preferences = model.preferences
+            check("the menu bar shows Session % by default, refresh every 5 minutes",
+                  preferences.menuBarStyle == .session && preferences.refreshMinutes == 5)
+            let gaugeOnly = MenuBarGlyph.image(style: .gaugeOnly, session: Used(42)).size.width
+            let wide = MenuBarGlyph.image(style: .sessionWeekly, session: Used(9), second: Used(18)).size.width
+            check("each menu bar style keeps one width",
+                  gaugeOnly < wide && wide == MenuBarGlyph.image(style: .sessionWeekly, session: Used(100), second: Used(100)).size.width)
+            preferences.refreshMinutes = 15
+            check("Refresh every changes the limits timer", model.limits.interval == .seconds(900))
+            preferences.refreshLoginState()
+            check("Open at Login mirrors macOS's login item",
+                  preferences.openAtLogin == (SMAppService.mainApp.status == .enabled))
 
             // S-009: old readings are deleted, recent ones kept.
             let old = LimitSnapshot(sessionUsed: 1, sessionResets: .now, weeklyUsed: 1, weeklyResets: .now)

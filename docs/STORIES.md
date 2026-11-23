@@ -289,27 +289,27 @@ Status: done
 
 ### S-040 Choose what the menu bar shows
 As the user, I pick what Kakeibo shows in the menu bar.
-Screens: settings-dark.png, menubar-dark.png
+Screens: settings-general-dark.png, menubar-dark.png
 Depends: S-004
 Acceptance:
 - [snap] Settings > General > Menu Bar: "Gauge Only", "Session %", "Session + Weekly", "Session + Fable".
-- [snap] Each choice has a menubar snapshot variant.
-Status: todo
+- [snap] Each choice has a row in menubar-light/dark.png, and each style keeps one width (self-test).
+Status: done
 
 ### S-041 Launch at login
 As the user, I have Kakeibo start when I log in.
 Screens: settings-dark.png
 Acceptance:
-- [self] Settings > General > "Open at Login" uses `SMAppService.mainApp`; the toggle reflects the real state.
-Status: todo
+- [self] Settings > General > "Open at Login" uses `SMAppService.mainApp`; the toggle reflects the real state (test runs never change it).
+Status: done
 
 ### S-042 Set how often to refresh
 As the user, I choose how often limits are fetched.
 Screens: settings-dark.png
 Depends: S-003
 Acceptance:
-- [snap] "Refresh every" 1, 5, 15 minutes; default 5.
-Status: todo
+- [snap] "Refresh every" 1, 5, 15 minutes; default 5; a change restarts the limits timer (self-test).
+Status: done
 
 ### S-043 App icon with the 家 Seal
 As the user, I see Kakeibo's own icon in the Dock and Settings.

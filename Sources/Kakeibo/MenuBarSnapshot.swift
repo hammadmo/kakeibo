@@ -6,19 +6,24 @@ import KakeiboKit
 @MainActor
 enum MenuBarSnapshot {
     static func render(to dir: String) {
-        let samples: [Double?] = [nil, 9, 42, 92, 100]
+        // One row per style (S-040): no reading, 9%, 42%, 92%; second limit 18%, 63%, 95%.
+        let samples: [(Double?, Double?)] = [(nil, nil), (9, 18), (42, 63), (92, 18), (42, 95)]
         for (mode, name) in [("light", NSAppearance.Name.aqua), ("dark", .darkAqua)] {
-            let images = samples.map { MenuBarGlyph.image(used: $0.map(Used.init)) }
+            let rows = MenuBarStyle.allCases.map { style in
+                samples.map { MenuBarGlyph.image(style: style, session: $0.0.map(Used.init), second: $0.1.map(Used.init)) }
+            }
             let pad: CGFloat = 12
-            let width = images.reduce(pad) { $0 + $1.size.width + pad }
-            let size = NSSize(width: width, height: 24)
+            let width = rows.map { $0.reduce(pad) { $0 + $1.size.width + pad } }.max() ?? 100
+            let size = NSSize(width: width, height: CGFloat(rows.count) * 24)
             let strip = NSImage(size: size, flipped: false) { rect in
                 (mode == "light" ? NSColor(white: 0.93, alpha: 1) : NSColor(white: 0.16, alpha: 1)).setFill()
                 rect.fill()
                 let ink: NSColor = mode == "light" ? .black : .white
+                for (row, images) in rows.enumerated() {
                 var x = pad
+                let rowY = size.height - CGFloat(row + 1) * 24
                 for image in images {
-                    let frame = NSRect(x: x, y: (size.height - image.size.height) / 2,
+                    let frame = NSRect(x: x, y: rowY + (24 - image.size.height) / 2,
                                        width: image.size.width, height: image.size.height)
                     if image.isTemplate {
                         // Tint like the menu bar does: the template's alpha in the bar's ink.
@@ -33,6 +38,7 @@ enum MenuBarSnapshot {
                         image.draw(in: frame)
                     }
                     x += image.size.width + pad
+                }
                 }
                 return true
             }
