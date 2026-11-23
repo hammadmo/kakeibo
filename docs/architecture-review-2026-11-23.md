@@ -44,3 +44,8 @@ Dashboard card depends on it.
 ## Considered, not recommended
 - Splitting `SelfTest.swift`: 100 lines, fine.
 - Moving `SeedData.writeLogs` into KakeiboKit: it's test fixture code and only the app uses it.
+
+## M2 check-in (same day)
+4,100 lines; largest files `EnsoGauge.swift` (301) and `Dashboard/OverviewPage.swift` (285). No new signals.
+Dashboard data is read once per range/version through `UsageService.dashboard(range:)` from the actor.
+Still open: "Limits behind a seam", which is due at the start of M4 (Alerts).
