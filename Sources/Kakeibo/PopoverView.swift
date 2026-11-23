@@ -15,6 +15,7 @@ struct PopoverView: View {
             }
             StatusLine(status: limits.status, updatedAt: limits.updatedAt)
             TodayCard()
+            LiveNow()
             TodayByProject()
             PopoverFooter()
         }

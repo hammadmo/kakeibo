@@ -70,7 +70,10 @@ enum SeedData {
                 let scale = day == 0 ? 1.0 : 0.3 + Double((day * 7 + index * 3) % 10) / 10
                 let total = Int(Double(todayTokens) * scale)
                 guard total > 0, !(day > 0 && (day + index) % 6 == 0) else { continue }
-                let time = calendar.date(byAdding: .day, value: -day, to: noon)!.addingTimeInterval(Double(index) * 60)
+                // Kakeibo's session today replied 90 seconds ago, so it shows as live (S-052).
+                let time = day == 0 && index == 0 && Date.now.timeIntervalSince(calendar.startOfDay(for: .now)) > 300
+                    ? Date.now.addingTimeInterval(-90)
+                    : calendar.date(byAdding: .day, value: -day, to: noon)!.addingTimeInterval(Double(index) * 60)
                 let model = models[(day + index) % models.count]
                 let output = total / 50, write = total / 10, input = total / 100
                 let read = total - output - write - input

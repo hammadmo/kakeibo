@@ -107,6 +107,19 @@ public actor UsageStore {
         (filesByProject[project] ?? []).sorted().map { URL(fileURLWithPath: $0) }
     }
 
+    /// Sessions whose newest reply is under `window` seconds old, newest first,
+    /// with every token the session used (S-052).
+    public func liveSessions(now: Date = .now, window: TimeInterval = TimelineSession.liveWindow) -> [LiveSession] {
+        var sessions: [String: LiveSession] = [:]
+        for r in records where !r.session.isEmpty {
+            var s = sessions[r.session] ?? LiveSession(id: r.session, project: r.project, tokens: 0, last: r.time)
+            s.tokens += r.tokens
+            if r.time > s.last { s.last = r.time; s.project = r.project }
+            sessions[r.session] = s
+        }
+        return sessions.values.filter { now.timeIntervalSince($0.last) < window }.sorted { $0.last > $1.last }
+    }
+
     // MARK: Summaries
 
     public func total(from start: Date, to end: Date = .distantFuture) -> UsageTotals {
@@ -151,4 +164,12 @@ public actor UsageStore {
         }
         return groups.sorted { $0.value.tokens > $1.value.tokens }.map { ($0.key, $0.value) }
     }
+}
+
+/// A Claude Code session that replied in the last few minutes (S-052).
+public struct LiveSession: Equatable, Sendable, Identifiable {
+    public var id: String
+    public var project: String
+    public var tokens: Int
+    public var last: Date
 }

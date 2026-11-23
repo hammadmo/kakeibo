@@ -72,3 +72,17 @@ private func line(id: String = "msg_1", request: String = "req_1", model: String
     #expect(Timestamp.parse("2026-11-22T13:37:03Z")?.timeIntervalSince1970 == 1_795_354_623)
     #expect(Timestamp.parse("nonsense") == nil)
 }
+
+@Test func liveSessionsAreUnderFiveMinutesOld() async throws {
+    let dir = FileManager.default.temporaryDirectory.appending(path: "kakeibo-live-\(UUID().uuidString)/-Users-me-P")
+    try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+    let lines = [line(id: "a", time: "2026-11-23T10:00:00.000Z"), line(id: "b", time: "2026-11-23T10:04:00.000Z")]
+    try (lines.joined(separator: "\n") + "\n").write(to: dir.appending(path: "s.jsonl"), atomically: true, encoding: .utf8)
+    let store = UsageStore(root: dir.deletingLastPathComponent())
+    await store.refresh()
+    let now = Timestamp.parse("2026-11-23T10:08:00Z")!
+    let live = await store.liveSessions(now: now)
+    #expect(live.count == 1)
+    #expect(live.first?.tokens == 2 * (2 + 281 + 27920 + 47061))
+    #expect(await store.liveSessions(now: now.addingTimeInterval(120)).isEmpty)
+}

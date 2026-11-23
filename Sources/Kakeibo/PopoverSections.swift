@@ -172,3 +172,43 @@ extension Dashboard {
         NSApp.activate()
     }
 }
+
+/// S-052: Claude Code sessions that replied in the last 5 minutes.
+struct LiveNow: View {
+    @Environment(AppModel.self) private var model
+    @Environment(\.openWindow) private var openWindow
+
+    var body: some View {
+        let live = model.usage.live
+        if !live.isEmpty {
+            VStack(alignment: .leading, spacing: Space.sm) {
+                Text("Live now").kitType(.section).foregroundStyle(Ink.accentText)
+                    .accessibilityAddTraits(.isHeader)
+                ForEach(live.prefix(2)) { session in
+                    HStack(spacing: Space.sm) {
+                        LiveDot()
+                        Text((session.project as NSString).lastPathComponent)
+                            .kitType(.label).foregroundStyle(Ink.text)
+                            .lineLimit(1).truncationMode(.middle)
+                            .help(session.project)
+                        Spacer(minLength: Space.sm)
+                        Text("\(Format.tokens(session.tokens)) this session").kitType(.meta).foregroundStyle(Ink.textSoft)
+                    }
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel("Live now: \((session.project as NSString).lastPathComponent), \(Format.spokenTokens(session.tokens)) this session")
+                }
+                if live.count > 2 {
+                    Button("+\(live.count - 2) more") {
+                        model.sidebar = .today
+                        Dashboard.open(openWindow)
+                    }
+                    .buttonStyle(.plain)
+                    .kitType(.meta)
+                    .foregroundStyle(Ink.accentText)
+                    .help("Show today's sessions in the Dashboard")
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+}

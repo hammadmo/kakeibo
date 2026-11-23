@@ -147,6 +147,10 @@ enum SelfTest {
                     && timeline.first?.sessions.first?.branch == "dashboard-charts" && timeline.first?.sessions.first?.files.count == 1,
                   "\(timeline.map { ($0.project, $0.sessions.count) })")
 
+            // S-052: live sessions update with each log read.
+            check("Kakeibo's session in the fixture logs is live", model.usage.live.first?.project == kakeibo,
+                  "\(model.usage.live.map(\.project))")
+
             // S-040 to S-042: Settings > General.
             let preferences = model.preferences
             check("the menu bar shows Session % by default, refresh every 5 minutes",

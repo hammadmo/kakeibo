@@ -16,6 +16,8 @@ final class UsageService {
 
     private(set) var today = UsageTotals()
     private(set) var todayByProject: [ProjectRow] = []
+    /// Sessions that replied in the last 5 minutes (S-052).
+    private(set) var live: [LiveSession] = []
     private(set) var isReading = false
     private(set) var hasRead = false
     /// Bumps after each read, so the Dashboard reloads its charts.
@@ -56,6 +58,7 @@ final class UsageService {
         let midnight = Calendar.current.startOfDay(for: .now)
         today = await store.total(from: midnight)
         todayByProject = await store.byProject(from: midnight).map { ProjectRow(id: $0.project, totals: $0.totals) }
+        live = await store.liveSessions()
         hasRead = true
         version += 1
     }

@@ -368,7 +368,7 @@ Acceptance:
 - [snap] The popover shows a "Live now" row under Today: a pulsing gold dot, the Project, and the session's Tokens; up to two, then "+N more".
 - [snap] The Today page marks live sessions with the same dot and "now".
 - [self] Live sessions update with every log read (each minute).
-Status: todo
+Status: done
 UX:
 - Surface: inline row in the popover, and the Today page.
 - Words: "Live now"; help "Claude Code replied in this session in the last 5 minutes".
