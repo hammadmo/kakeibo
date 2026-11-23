@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.2
+- Fixed: after a few quiet hours Kakeibo said your Claude Code login had expired and asked you to sign in in Terminal. Only Claude Code's short-lived token had expired, and signing in was never needed. Kakeibo now asks Claude Code to renew it (no tokens spent), keeps showing your last reading, and says limits update the next time Claude Code runs. Open Terminal appears only when you have really signed out.
+
 ## 0.3.1
 - `kakeibo live`: Claude Code sessions that replied in the last 5 minutes, with their tokens.
 - `kakeibo timeline`: today's sessions per project, with times, branch, the first prompt, and the prompts and files changed. Add `--project` for one project.

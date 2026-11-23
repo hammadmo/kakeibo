@@ -3,6 +3,19 @@
     <channel>
         <title>Kakeibo</title>
         <item>
+            <title>0.3.2</title>
+            <pubDate>Tue, 24 Nov 2026 00:51:54 +0200</pubDate>
+            <sparkle:version>202611240051</sparkle:version>
+            <sparkle:shortVersionString>0.3.2</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
+            <description><![CDATA[<ul>
+<li>Fixed: after a few quiet hours Kakeibo said your Claude Code login had expired and asked you to sign in in Terminal. Only Claude Code's short-lived token had expired, and signing in was never needed. Kakeibo now asks Claude Code to renew it (no tokens spent), keeps showing your last reading, and says limits update the next time Claude Code runs. Open Terminal appears only when you have really signed out.</li>
+</ul>
+]]></description>
+            <enclosure url="https://github.com/hammadmo/kakeibo/releases/download/v0.3.2/Kakeibo-0.3.2.zip" length="4265461" type="application/octet-stream" sparkle:edSignature="tv1nceZWEskdDT6D12w/bfhPv2AFZgCWC4nVObAq05GrJClOIhAko8plXDwQ2J6ouNcRATuav+C2Wu1TGbuTAQ=="/>
+        </item>
+        <item>
             <title>0.3.1</title>
             <pubDate>Tue, 24 Nov 2026 00:40:12 +0200</pubDate>
             <sparkle:version>202611240039</sparkle:version>
@@ -31,19 +44,6 @@
 </ul>
 ]]></description>
             <enclosure url="https://github.com/hammadmo/kakeibo/releases/download/v0.3/Kakeibo-0.3.zip" length="4248824" type="application/octet-stream" sparkle:edSignature="kHmDGM1feYdzF2cfIAOApA/qPbb9TCBNPkiluYkh20k+Ftj659a+4VZNzJ8OcWddC6Ms2N9lFx0kWPORyBqDDQ=="/>
-        </item>
-        <item>
-            <title>0.2.1</title>
-            <pubDate>Mon, 23 Nov 2026 16:18:14 +0200</pubDate>
-            <sparkle:version>202611231617</sparkle:version>
-            <sparkle:shortVersionString>0.2.1</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
-            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
-            <description><![CDATA[<ul>
-<li>Fixed: the popover opened with a focus ring around its first button ("+2 more"). It now opens calm; Tab still moves through the buttons.</li>
-</ul>
-]]></description>
-            <enclosure url="https://github.com/hammadmo/kakeibo/releases/download/v0.2.1/Kakeibo-0.2.1.zip" length="4224567" type="application/octet-stream" sparkle:edSignature="GN95jGVNXyvMs7Q2eKqDkKUaEOYJzQCH7WADuiDxGDsjMW5jSxUtISi17iiLy2M+mW4gZXPqojdH3nJKrB7iBg=="/>
         </item>
     </channel>
 </rss>
