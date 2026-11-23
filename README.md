@@ -14,6 +14,7 @@
   <img src="https://img.shields.io/badge/macOS-26-1d1a17" alt="macOS 26">
   <img src="https://img.shields.io/badge/Apple%20silicon-only-1d1a17" alt="Apple silicon only">
   <img src="https://img.shields.io/badge/Swift-6-b8934a" alt="Swift 6">
+  <img src="https://img.shields.io/badge/license-MIT-b8934a" alt="MIT license">
 </p>
 
 <p align="center">
@@ -188,3 +189,7 @@ with your own certificate if you have one. Releases: [docs/RELEASING.md](docs/RE
 How it is put together: [ARCHITECTURE.md](ARCHITECTURE.md).
 
 Designed and built by Mohamed Hammad.
+
+## License
+
+[MIT](LICENSE)
