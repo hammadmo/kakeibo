@@ -49,3 +49,8 @@ Dashboard card depends on it.
 4,100 lines; largest files `EnsoGauge.swift` (301) and `Dashboard/OverviewPage.swift` (285). No new signals.
 Dashboard data is read once per range/version through `UsageService.dashboard(range:)` from the actor.
 Still open: "Limits behind a seam", which is due at the start of M4 (Alerts).
+
+## M3 check-in
+`SummaryService` keeps UI state on the main actor; `ClaudeCLI` (process, git, file reads) is nonisolated and runs
+detached. The CLI is a real seam (`APP_CLAUDE`): production and a fake script in the self-test. No new signals.
+Still open: "Limits behind a seam" before M4 (Alerts).
