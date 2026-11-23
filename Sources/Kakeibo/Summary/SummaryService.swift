@@ -44,6 +44,13 @@ final class SummaryService {
         }
     }
 
+    /// Summarize and wait for it (S-060). True when today's Summary was made.
+    func summarizeAndWait(_ project: String) async -> Bool {
+        summarize(project)
+        await running[project]?.value
+        return errors[project] == nil && today(project) != nil
+    }
+
     func cancel(_ project: String) {
         running[project]?.cancel()
         running[project] = nil

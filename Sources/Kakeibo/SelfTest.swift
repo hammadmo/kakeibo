@@ -134,8 +134,8 @@ enum SelfTest {
 
             // S-032: the daily numbers, once, after its time, from today's usage.
             alerts.dailyMinutes = 0
-            alerts.checkDaily(usage: model.usage)
-            alerts.checkDaily(usage: model.usage)
+            await alerts.checkDaily(usage: model.usage)
+            await alerts.checkDaily(usage: model.usage)
             check("the daily Alert goes out once with today's numbers",
                   alerts.sent.filter { $0.identifier == "daily" }.count == 1
                     && alerts.sent.last?.title().hasPrefix("Today: 1.24 M tokens") == true, alerts.sent.last?.title() ?? "")
@@ -169,6 +169,29 @@ enum SelfTest {
             preferences.refreshLoginState()
             check("Open at Login mirrors macOS's login item",
                   preferences.openAtLogin == (SMAppService.mainApp.status == .enabled))
+
+            // S-060: the daily Alert with Summaries (fake CLI, no tokens spent).
+            alerts.summarizeDay = false
+            check("Summarize my day is off by default, so no tokens are spent", alerts.lastBody == nil)
+            alerts.summarizeDay = true
+            fakeCLI(#"echo '{"type":"result","is_error":false,"result":"Shipped the Today page.","usage":{"input_tokens":2,"output_tokens":20}}'"#)
+            for project in model.usage.todayByProject.prefix(3) {
+                if let old = model.summaries.today(project.id) { context.delete(old) }
+            }
+            try? context.save()
+            await alerts.checkDaily(usage: model.usage, now: Date.now.addingTimeInterval(86_400), summaries: model.summaries)
+            let summarized = model.usage.todayByProject.prefix(3).filter { model.summaries.today($0.id) != nil }.count
+            check("with Summarize my day, the three busiest Projects are summarized and the Alert carries one",
+                  summarized == 3 && alerts.lastBody == "Shipped the Today page.", "\(summarized) \(alerts.lastBody ?? "nil")")
+            fakeCLI("echo 'limit reached' >&2\nexit 1")
+            for project in model.usage.todayByProject.prefix(3) {
+                if let old = model.summaries.today(project.id) { context.delete(old) }
+            }
+            try? context.save()
+            let sentBefore = alerts.sent.count
+            await alerts.checkDaily(usage: model.usage, now: Date.now.addingTimeInterval(2 * 86_400), summaries: model.summaries)
+            check("a failed Summary never holds back the daily Alert", alerts.sent.count == sentBefore + 1 && alerts.lastBody == nil)
+            unsetenv("APP_CLAUDE")
 
             // S-009: old readings are deleted, recent ones kept.
             let old = LimitSnapshot(sessionUsed: 1, sessionResets: .now, weeklyUsed: 1, weeklyResets: .now)

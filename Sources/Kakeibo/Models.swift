@@ -71,7 +71,7 @@ final class AppModel {
 
         limits.start()
         usage.start()
-        alerts.start(usage: usage)
+        alerts.start(usage: usage, summaries: summaries)
     }
 
     /// Refresh (S-008): fetch limits (skipped if fetched under a minute ago) and read new logs.

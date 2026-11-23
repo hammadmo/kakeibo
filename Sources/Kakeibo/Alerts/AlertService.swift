@@ -14,13 +14,18 @@ final class AlertService {
     var limitAlerts: Bool { didSet { defaults.set(limitAlerts, forKey: "alerts.limits"); turnedOn(limitAlerts) } }
     var resetAlerts: Bool { didSet { defaults.set(resetAlerts, forKey: "alerts.resets"); turnedOn(resetAlerts) } }
     var dailyAlert: Bool { didSet { defaults.set(dailyAlert, forKey: "alerts.daily"); turnedOn(dailyAlert) } }
+    /// S-060: summarize the three busiest Projects before the daily Alert. Off by
+    /// default: it spends plan tokens.
+    var summarizeDay: Bool { didSet { defaults.set(summarizeDay, forKey: "alerts.summarizeDay") } }
     /// Minutes after midnight for the daily Alert; 21:00 by default.
     var dailyMinutes: Int { didSet { defaults.set(dailyMinutes, forKey: "alerts.dailyMinutes") } }
 
     /// What macOS allows; shown in Settings > Alerts.
     private(set) var permission: UNAuthorizationStatus = .notDetermined
-    /// Every Alert sent in a test run, in order (self-test reads it).
+    /// Every Alert sent in a test run, in order, and the last body (self-test reads them).
     private(set) var sent: [AlertEvent] = []
+    private(set) var lastBody: String?
+    private var summaries: SummaryService?
 
     private var states: [String: LimitAlertState]
     private var lastDaily: Date? { didSet { defaults.set(lastDaily, forKey: "alerts.lastDaily") } }
@@ -33,6 +38,7 @@ final class AlertService {
         resetAlerts = d.object(forKey: "alerts.resets") as? Bool ?? true
         dailyAlert = d.object(forKey: "alerts.daily") as? Bool ?? true
         dailyMinutes = d.object(forKey: "alerts.dailyMinutes") as? Int ?? 21 * 60
+        summarizeDay = d.object(forKey: "alerts.summarizeDay") as? Bool ?? false
         lastDaily = d.object(forKey: "alerts.lastDaily") as? Date
         states = (d.data(forKey: "alerts.states")).flatMap { try? JSONDecoder().decode([String: LimitAlertState].self, from: $0) } ?? [:]
     }
@@ -66,24 +72,35 @@ final class AlertService {
     // MARK: Daily (S-032)
 
     /// Checks the daily Alert every minute.
-    func start(usage: UsageService) {
+    func start(usage: UsageService, summaries: SummaryService) {
+        self.summaries = summaries
         timer?.cancel()
         timer = Task { [weak self] in
             while !Task.isCancelled {
-                self?.checkDaily(usage: usage)
+                await self?.checkDaily(usage: usage)
                 try? await Task.sleep(for: .seconds(60))
             }
         }
         Task { await refreshPermission() }
     }
 
-    func checkDaily(usage: UsageService, now: Date = .now) {
+    func checkDaily(usage: UsageService, now: Date = .now, summaries: SummaryService? = nil) async {
         guard dailyAlert, usage.hasRead,
               DailyAlert.shouldFire(now: now, hour: dailyMinutes / 60, minute: dailyMinutes % 60, lastFired: lastDaily,
                                     hasActivity: usage.today.replies > 0)
         else { return }
+        // Marked first, so a slow Summary never lets a second Alert start.
         lastDaily = now
-        send(.daily(tokens: usage.today.tokens, cost: usage.today.cost, topProject: usage.todayByProject.first?.name))
+        var body: String?
+        if summarizeDay, let service = summaries ?? self.summaries {
+            // S-060: the three busiest Projects, one at a time; a failure is skipped.
+            let top = Array(usage.todayByProject.prefix(3).map(\.id))
+            for project in top where service.today(project) == nil {
+                _ = await service.summarizeAndWait(project)
+            }
+            body = top.lazy.compactMap { service.today($0)?.text }.first
+        }
+        send(.daily(tokens: usage.today.tokens, cost: usage.today.cost, topProject: usage.todayByProject.first?.name), body: body)
     }
 
     // MARK: Notifications
@@ -101,13 +118,14 @@ final class AlertService {
         return (try? await UNUserNotificationCenter.current().add(request)) != nil
     }
 
-    private func send(_ event: AlertEvent) {
-        guard !Store.isOverridden else { sent.append(event); return }
+    private func send(_ event: AlertEvent, body: String? = nil) {
+        guard !Store.isOverridden else { sent.append(event); lastBody = body; return }
         Task {
             // Asked the first time an Alert is due, never at launch.
             guard await requestPermissionIfNeeded() else { return }
             let content = UNMutableNotificationContent()
             content.title = event.title()
+            if let body { content.body = body }
             content.sound = event.identifier == "daily" ? nil : .default
             let request = UNNotificationRequest(identifier: event.identifier, content: content, trigger: nil)
             try? await UNUserNotificationCenter.current().add(request)

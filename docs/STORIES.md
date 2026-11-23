@@ -403,7 +403,7 @@ Acceptance:
 - [self] When the daily Alert is due and it is on, Kakeibo summarizes today's three busiest Projects (one at a time, skipping any already summarized today), then sends the Alert with the first Summary as its body.
 - [self] A failed Summary never holds back the Alert: it goes out with the numbers only.
 - [self] Off (the default) spends no tokens: the Alert carries the numbers only.
-Status: todo
+Status: done
 UX:
 - Surface: a toggle under the daily numbers row in Settings > Alerts.
 - Words: "Summarize my day"; detail as above; disabled while "Daily numbers" is off.

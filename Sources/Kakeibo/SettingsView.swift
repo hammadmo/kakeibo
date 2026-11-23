@@ -197,6 +197,11 @@ struct AlertSettings: View {
                         Toggle("Daily numbers", isOn: $alerts.dailyAlert).toggleStyle(.kit).labelsHidden()
                     }
                 }
+                SettingsRow(title: "Summarize my day",
+                            detail: "Uses a few thousand tokens of your plan for each of your three busiest Projects.") {
+                    Toggle("Summarize my day", isOn: $alerts.summarizeDay).toggleStyle(.kit).labelsHidden()
+                        .disabled(!alerts.dailyAlert)
+                }
             }
         }
         .task { await model.alerts.refreshPermission() }
