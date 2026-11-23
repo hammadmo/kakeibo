@@ -3,6 +3,22 @@
     <channel>
         <title>Kakeibo</title>
         <item>
+            <title>0.3.1</title>
+            <pubDate>Tue, 24 Nov 2026 00:40:12 +0200</pubDate>
+            <sparkle:version>202611240039</sparkle:version>
+            <sparkle:shortVersionString>0.3.1</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
+            <description><![CDATA[<ul>
+<li><code>kakeibo live</code>: Claude Code sessions that replied in the last 5 minutes, with their tokens.</li>
+<li><code>kakeibo timeline</code>: today's sessions per project, with times, branch, the first prompt, and the prompts and files changed. Add <code>--project</code> for one project.</li>
+<li><code>kakeibo project open &lt;project&gt;</code>: open a project's folder in Finder, or with <code>--in</code> in an installed terminal or editor.</li>
+<li>The same three are tools in Kakeibo's MCP server.</li>
+</ul>
+]]></description>
+            <enclosure url="https://github.com/hammadmo/kakeibo/releases/download/v0.3.1/Kakeibo-0.3.1.zip" length="4259329" type="application/octet-stream" sparkle:edSignature="y7a3Pyv/MNeYRZ5vjlQm+aLsxOl5I5E1Wri7/AAgvEgln2RpzqWYgynf6la1LB0exNQY8pJ+UPxseb7ctkKABg=="/>
+        </item>
+        <item>
             <title>0.3</title>
             <pubDate>Mon, 23 Nov 2026 16:43:10 +0200</pubDate>
             <sparkle:version>202611231642</sparkle:version>
@@ -28,24 +44,6 @@
 </ul>
 ]]></description>
             <enclosure url="https://github.com/hammadmo/kakeibo/releases/download/v0.2.1/Kakeibo-0.2.1.zip" length="4224567" type="application/octet-stream" sparkle:edSignature="GN95jGVNXyvMs7Q2eKqDkKUaEOYJzQCH7WADuiDxGDsjMW5jSxUtISi17iiLy2M+mW4gZXPqojdH3nJKrB7iBg=="/>
-        </item>
-        <item>
-            <title>0.2</title>
-            <pubDate>Mon, 23 Nov 2026 15:58:18 +0200</pubDate>
-            <sparkle:version>202611231557</sparkle:version>
-            <sparkle:shortVersionString>0.2</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
-            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
-            <description><![CDATA[<ul>
-<li>The Dashboard opens on your usage: Session, Weekly, and Fable gauges with when each resets, and today's tokens, estimated cost, replies, projects, and live sessions.</li>
-<li>A Today page: each project's sessions today, with times, branch, the first prompt, and how many prompts and files.</li>
-<li>Live now in the popover: Claude Code sessions that replied in the last 5 minutes, with their tokens.</li>
-<li>The Projects page opens with the six busiest projects as cards, each with a 14-day line; click one to see its activity.</li>
-<li>Fixed: reset times a few days away read 4:52 PM as "04:52". They now follow your Mac's clock.</li>
-<li><code>kakeibo open today</code> opens the new page.</li>
-</ul>
-]]></description>
-            <enclosure url="https://github.com/hammadmo/kakeibo/releases/download/v0.2/Kakeibo-0.2.zip" length="4224232" type="application/octet-stream" sparkle:edSignature="8kBySkaD8j88TYsknH+Udf7/2zpdWVuJTlH7eGqvGSRNR8/msLgVhPd3m1MdL5toslF/J/LDmtp2Epd/OimZAQ=="/>
         </item>
     </channel>
 </rss>

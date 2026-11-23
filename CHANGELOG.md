@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.1
+- `kakeibo live`: Claude Code sessions that replied in the last 5 minutes, with their tokens.
+- `kakeibo timeline`: today's sessions per project, with times, branch, the first prompt, and the prompts and files changed. Add `--project` for one project.
+- `kakeibo project open <project>`: open a project's folder in Finder, or with `--in` in an installed terminal or editor.
+- The same three are tools in Kakeibo's MCP server.
+
 ## 0.3
 - Summarize my day (Settings > Alerts, off by default): before the daily Alert, Kakeibo summarizes your three busiest projects with Haiku and puts the first Summary in the Alert. It uses a few thousand tokens of your plan for each.
 - Open a project in Finder, your terminal (Terminal, iTerm, Ghostty, Warp), or your editor (VS Code, Cursor, Zed, Xcode): the Open menu on the Today page, or the context menu of a project on the Projects page.
