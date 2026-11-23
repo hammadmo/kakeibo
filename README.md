@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/hammadmo/kakeibo/releases/latest"><img src="https://img.shields.io/badge/download-0.1-b8934a" alt="Download 0.1"></a>
+  <a href="https://github.com/hammadmo/kakeibo/releases/latest"><img src="https://img.shields.io/badge/download-0.2-b8934a" alt="Download 0.2"></a>
   <img src="https://img.shields.io/badge/macOS-26-1d1a17" alt="macOS 26">
   <img src="https://img.shields.io/badge/Apple%20silicon-only-1d1a17" alt="Apple silicon only">
   <img src="https://img.shields.io/badge/Swift-6-b8934a" alt="Swift 6">
@@ -89,8 +89,8 @@ The pictures show sample data, not a real account.
 
 ## Install
 
-1. Download `Kakeibo-0.1.zip` from the
-   [0.1 release](https://github.com/hammadmo/kakeibo/releases/tag/v0.1) and unzip it.
+1. Download `Kakeibo-0.2.zip` from the
+   [latest release](https://github.com/hammadmo/kakeibo/releases/latest) and unzip it.
 2. Move `Kakeibo.app` to your Applications folder and open it. It lives in the
    menu bar; there is no Dock icon until you open the Dashboard or Settings.
 3. The first time it fetches your limits, macOS asks whether Kakeibo may use the
@@ -148,7 +148,7 @@ The release notes give the zip's SHA-256. To check it, and to see who signed the
 app and that Apple notarized it:
 
 ```bash
-shasum -a 256 ~/Downloads/Kakeibo-0.1.zip
+shasum -a 256 ~/Downloads/Kakeibo-0.2.zip
 ```
 
 ```bash

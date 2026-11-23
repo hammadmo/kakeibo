@@ -11,6 +11,9 @@ version=${1:?usage: tools/release.sh <version>, like 0.2}
 grep -q "^## $version\$" "$here/CHANGELOG.md" || { echo "add '## $version' and its changes to CHANGELOG.md first"; exit 1; }
 
 sed -i '' -E "s|(<key>CFBundleShortVersionString</key><string>)[^<]*|\1$version|" "$here/Info.plist.in"
+# The README's download badge and zip names follow the version.
+sed -i '' -E -e "s|badge/download-[0-9.]+-|badge/download-$version-|" -e "s|alt=\"Download [0-9.]+\"|alt=\"Download $version\"|" \
+  -e "s|Kakeibo-[0-9]+(\.[0-9]+)+\.zip|Kakeibo-$version.zip|g" "$here/README.md"
 "$here/build.sh" --notarize
 
 dist="$HOME/Library/Developer/Kakeibo/dist"
@@ -37,4 +40,5 @@ echo "Kakeibo $version is ready: $zip"
 echo "sha256: $(shasum -a 256 "$zip" | cut -d' ' -f1)"
 echo "Next, by hand:"
 echo "  1. Create the GitHub release v$version on hammadmo/kakeibo and attach Kakeibo-$version.zip"
-echo "  2. Commit Info.plist.in, CHANGELOG.md, and appcast.xml, then push"
+echo "  2. Commit Info.plist.in, CHANGELOG.md, README.md, and appcast.xml, then push"
+echo "  3. Bump version and sha256 in hammadmo/homebrew-tap Casks/kakeibo.rb"

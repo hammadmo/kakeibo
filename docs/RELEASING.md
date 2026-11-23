@@ -15,7 +15,9 @@ Kakeibo updates itself with [Sparkle](https://sparkle-project.org), like Hachibu
 2. `tools/release.sh <version>`: sets the version, builds, notarizes and staples, zips with `ditto`,
    and writes `appcast.xml`, signed with the update key.
 3. Create the GitHub release `v<version>` on `hammadmo/kakeibo` with the zip (put its sha256 in the notes).
-4. Commit `Info.plist.in`, `CHANGELOG.md`, and `appcast.xml`, and push. Installed copies find it within a day,
+4. Commit `Info.plist.in`, `CHANGELOG.md`, `README.md` (its badge and zip names follow the version), and `appcast.xml`, and push. Installed copies find it within a day,
    or at once with Settings > About > Check for Updates….
+
+5. Bump `version` and `sha256` in `Casks/kakeibo.rb` in `hammadmo/homebrew-tap`, and push.
 
 Sparkle compares build numbers, which `build.sh` makes from the date and time, so a later build is always newer.
