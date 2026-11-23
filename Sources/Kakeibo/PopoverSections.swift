@@ -146,7 +146,10 @@ struct PopoverFooter: View {
             }
             Rectangle().fill(Ink.hairline).frame(height: Metric.hairline)
             HStack(spacing: 0) {
-                Button("Dashboard…") { Dashboard.open(openWindow) }
+                Button("Dashboard…") {
+                    Dashboard.showOverview(model)
+                    Dashboard.open(openWindow)
+                }
                     .keyboardShortcut("d")
                     .help("Open the Dashboard (⌘D)")
                 Button("Settings…") {
@@ -165,6 +168,10 @@ struct PopoverFooter: View {
 }
 
 extension Dashboard {
+    /// "Dashboard…" always starts on Overview, where the Usage card is (S-053).
+    @MainActor
+    static func showOverview(_ model: AppModel) { model.sidebar = .overview }
+
     @MainActor
     static func open(_ openWindow: OpenWindowAction) {
         PopoverWindow.close()

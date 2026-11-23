@@ -70,3 +70,14 @@ import Testing
     #expect(try Limits.decode(Data(#"{"seven_day_breakdown":null}"#.utf8)).breakdown == nil)
     #expect(try Limits.decode(Data(#"{"seven_day_breakdown":{"rows":[]}}"#.utf8)).breakdown == nil)
 }
+
+@Test func laterResetsShowTheAfternoon() {
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.timeZone = TimeZone(identifier: "UTC")!
+    calendar.locale = Locale(identifier: "en_US")
+    let now = Date(timeIntervalSince1970: 1_796_040_000)          // Mon 30 Nov 2026 12:00 UTC
+    let thursday = now.addingTimeInterval(3 * 86_400 + 4 * 3600 + 52 * 60) // Thu 16:52 UTC
+    let text = ResetText.short(thursday, now: now, calendar: calendar)
+    #expect(text.hasPrefix("Resets Thu"))
+    #expect(text.contains("4:52") && text.contains("PM"), "\(text)")
+}

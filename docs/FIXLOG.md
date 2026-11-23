@@ -36,3 +36,9 @@ Cause: the first permission prompt was dismissed or declined, so macOS marked Ka
 Fix: the user turned on "Allow notifications" for Kakeibo in System Settings > Notifications; Settings > Alerts shows
 "Open Notifications…" when permission is denied, and "Send Test Alert" checks the path end to end.
 Rule: after a denied notification prompt, send people to System Settings; the app can't ask again.
+
+## Reset times read 4:52 PM as "04:52"
+Symptom: "Resets Thu 04:52" for a weekly reset at 4:52 PM, in the popover, Dashboard, Alerts, and CLI.
+Cause: `ResetText.short` formatted the hour as two digits with AM/PM omitted, which is a 12-hour clock.
+Fix: use the Mac's own time style (`.hour().minute()`), so it reads "Thu 4:52 PM" (or "Thu 16:52").
+Rule: never omit AM/PM from a 12-hour time; use the locale's time style instead of a fixed pattern.

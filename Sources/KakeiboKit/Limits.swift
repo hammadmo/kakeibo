@@ -129,9 +129,11 @@ public enum ResetText {
             let h = minutes / 60, m = minutes % 60
             return h > 0 ? "Resets in \(h) h \(m) m" : "Resets in \(m) m"
         }
-        let day = date.formatted(Date.FormatStyle(calendar: calendar).weekday(.abbreviated))
-        let time = date.formatted(Date.FormatStyle(calendar: calendar).hour(.twoDigits(amPM: .omitted)).minute(.twoDigits))
-        return "Resets \(day) \(time)"
+        // The Mac's own clock style ("Thu 4:52 PM" or "Thu 16:52"); a fixed
+        // two-digit hour without AM/PM read 4:52 PM as "04:52".
+        var style = Date.FormatStyle(calendar: calendar).weekday(.abbreviated).hour().minute()
+        style.timeZone = calendar.timeZone
+        return "Resets \(date.formatted(style))"
     }
 
     /// For VoiceOver: "resets in 2 hours 14 minutes".

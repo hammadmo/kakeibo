@@ -375,6 +375,21 @@ UX:
 - States: none live → the row hides.
 - Access: "Live now: Kakeibo, 412 thousand tokens this session"; the pulse respects Reduce Motion (a still dot).
 
+### S-053 See my usage first when the Dashboard opens
+As the user, I open the Dashboard and the first thing I see is my usage in detail: every limit and today's numbers.
+Screens: overview-light.png, overview-dark.png
+Depends: S-005, S-006, S-010
+Acceptance:
+- [snap] Overview starts with a "Usage" card: Session, Weekly, and Fable gauges side by side, each with its Used % and when it resets ("Resets in 2 h 14 m" with the exact time under it, or "Resets Thu 4:54 PM").
+- [snap] Under the gauges, today's numbers in one row: Tokens, estimated Cost, replies, Projects, and live sessions.
+- [self] "Dashboard…" in the popover always opens on Overview.
+Status: done
+UX:
+- Surface: the first card of the Overview page.
+- Words: card "Usage"; captions "Today", "Est. cost", "Replies", "Projects", "Live now"; a limit at 90% or more shows the Seal and "Almost reached".
+- States: no limits yet → the gauges show "–" and the login hint from the popover; no activity today → the numbers read 0.
+- Access: each gauge reads "Session limit, 42% used, resets in 2 hours 14 minutes"; the numbers row reads as one sentence.
+
 ---
 
 ## Later
