@@ -21,19 +21,26 @@ enum ClaudeCLI {
         return found.flatMap { $0.hasPrefix("/") ? URL(fileURLWithPath: $0) : nil }
     }
 
-    /// `claude auth status`: Claude Code reads its login and renews an expired
-    /// access token. Spends no tokens. Gives up after 30 seconds.
+    /// Renews Claude Code's expired access token. `claude auth status` only
+    /// reads the login, so this makes one tiny real call instead: Claude Code
+    /// renews the token with its refresh token before any request. Haiku, no
+    /// tools, no MCP servers, no session file; about 1,000 tokens. Gives up
+    /// after 60 seconds.
     nonisolated static func renewLogin() {
         guard let claude = find() else { return }
         let process = Process()
         process.executableURL = claude
-        process.arguments = ["auth", "status"]
+        process.arguments = ["-p", "--model", "haiku", "--output-format", "json", "--no-session-persistence",
+                             "--tools", "", "--strict-mcp-config", "--system-prompt", "Reply with one word."]
         process.currentDirectoryURL = FileManager.default.temporaryDirectory
-        process.standardInput = FileHandle.nullDevice
+        let input = Pipe()
+        process.standardInput = input
         process.standardOutput = FileHandle.nullDevice
         process.standardError = FileHandle.nullDevice
         guard (try? process.run()) != nil else { return }
-        let deadline = Date.now.addingTimeInterval(30)
+        input.fileHandleForWriting.write(Data("ok".utf8))
+        try? input.fileHandleForWriting.close()
+        let deadline = Date.now.addingTimeInterval(60)
         while process.isRunning && Date.now < deadline { Thread.sleep(forTimeInterval: 0.2) }
         if process.isRunning { process.terminate() }
     }

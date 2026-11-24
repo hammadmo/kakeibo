@@ -57,3 +57,12 @@ Fix: on an expired token (or a 401), Kakeibo runs `claude auth status` (no token
 and reads the Keychain again. Until it is renewed it keeps the last reading and says limits update when Claude Code
 runs; Open Terminal is only for a real sign-out. Settings shows "Waiting for Claude Code".
 Rule: tell an expired token apart from a sign-out; never send people to sign in when the app that owns the login renews it.
+
+## Limits still froze for 9 hours after the 0.3.2 fix
+Symptom: "Showing limits from 8:32 AM. They update the next time Claude Code runs…" all day, while Claude Code was busy.
+Cause: two wrong guesses in 0.3.2. The desktop app's Claude Code keeps its own login and never renews the Keychain
+token Kakeibo reads; and `claude auth status` only reads the login, it does not renew an expired token. Kakeibo ran it
+every 10 minutes for 9 hours with no effect.
+Fix: renew with one tiny real call (`claude -p`, Haiku, no tools, no MCP, no session file: about 1,000 tokens), at most
+every 30 minutes and only while the token is expired. Claude Code renews the token before any request.
+Rule: verify a side effect (here, a renewed token) on the real failure before shipping a fix that depends on it.

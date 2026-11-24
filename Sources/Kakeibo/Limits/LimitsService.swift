@@ -63,8 +63,8 @@ final class LimitsService {
         if let fixture = Self.fixture { applyFixture(fixture); return true }
 
         guard var login = ClaudeLogin.read() else { status = .signedOut; return true }
-        // The access token lasts about 8 hours and only Claude Code renews it.
-        // Ask Claude Code to look at its login (no tokens spent), then read it again.
+        // The access token lasts about 8 hours and only Claude Code renews it, when
+        // it makes a call. One tiny Haiku call renews it; then read it again.
         if login.isExpired {
             if await renewIfDue(), let renewed = ClaudeLogin.read() { login = renewed }
             if login.isExpired { status = .expired; return true }
@@ -95,11 +95,11 @@ final class LimitsService {
 
     /// When Kakeibo last asked Claude Code to renew its login.
     private var lastRenewal: Date?
-    /// At most one renewal every 10 minutes.
-    static let renewalGap: TimeInterval = 600
+    /// At most one renewal every 30 minutes (each one is a tiny Haiku call).
+    static let renewalGap: TimeInterval = 1800
 
-    /// Runs `claude auth status`, which reads Claude Code's login and renews an
-    /// expired token with its refresh token. Returns false when skipped (too soon).
+    /// Makes Claude Code renew its expired token with one tiny Haiku call
+    /// (`ClaudeCLI.renewLogin`). Returns false when skipped (too soon).
     @discardableResult
     func renewIfDue(now: Date = .now) async -> Bool {
         if let lastRenewal, now.timeIntervalSince(lastRenewal) < Self.renewalGap { return false }
