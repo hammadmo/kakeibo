@@ -66,3 +66,12 @@ every 10 minutes for 9 hours with no effect.
 Fix: renew with one tiny real call (`claude -p`, Haiku, no tools, no MCP, no session file: about 1,000 tokens), at most
 every 30 minutes and only while the token is expired. Claude Code renews the token before any request.
 Rule: verify a side effect (here, a renewed token) on the real failure before shipping a fix that depends on it.
+
+## "Check for Updates" failed on the Mac that made the release
+Symptom: updating to 0.3.3 from Settings > About ended in an error; the update itself was fine (checksum, EdDSA
+signature, and code signature all verified).
+Cause: `tools/release.sh` installs the release build over `~/Applications/Kakeibo.app` while an older Kakeibo keeps
+running from the replaced bundle. That copy offered 0.3.3, but the app on disk already was 0.3.3, and Sparkle refused.
+Only the release Mac can get into this state.
+Fix: `release.sh` builds with `--open`, restarting Kakeibo on the new build. Quitting and reopening fixed it here.
+Rule: never leave an app running on a bundle that was replaced under it; restart it after installing.

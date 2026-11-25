@@ -80,7 +80,9 @@ sed -i '' -E "s|(<key>CFBundleShortVersionString</key><string>)[^<]*|\1$version|
 # The README's download badge and zip names follow the version.
 sed -i '' -E -e "s|badge/download-[0-9.]+-|badge/download-$version-|" -e "s|alt=\"Download [0-9.]+\"|alt=\"Download $version\"|" \
   -e "s|Kakeibo-[0-9]+(\.[0-9]+)+\.zip|Kakeibo-$version.zip|g" README.md
-./build.sh --notarize
+# --open restarts Kakeibo, so the running copy is the one just installed (a copy left
+# running on the old bundle fails its own update check).
+./build.sh --notarize --open
 
 mkdir -p "$dist"
 # Keep only this version's zip: generate_appcast gives every zip it finds the same URL prefix.
