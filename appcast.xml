@@ -3,6 +3,19 @@
     <channel>
         <title>Kakeibo</title>
         <item>
+            <title>0.3.3</title>
+            <pubDate>Wed, 25 Nov 2026 11:40:29 +0200</pubDate>
+            <sparkle:version>202611251139</sparkle:version>
+            <sparkle:shortVersionString>0.3.3</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
+            <description><![CDATA[<ul>
+<li>Fixed: limits stopped updating about 8 hours after you last ran <code>claude</code> in Terminal ("Showing limits from 8:32 AM…"), even while you used Claude Code in the desktop app. When Claude Code's token expires, Kakeibo now has Claude Code renew it with one tiny Haiku call (about 1,000 tokens, at most every 30 minutes), so limits keep updating, overnight included.</li>
+</ul>
+]]></description>
+            <enclosure url="https://github.com/hammadmo/kakeibo/releases/download/v0.3.3/Kakeibo-0.3.3.zip" length="4264646" type="application/octet-stream" sparkle:edSignature="QLEAzHT9d+Lm26tBwPtU/z71jUJcIfEmVNPDblcAvMOmEl/aTVMhbCWo5uCn2LNwMe+XjF9So12nrAyqVqVGDQ=="/>
+        </item>
+        <item>
             <title>0.3.2</title>
             <pubDate>Tue, 24 Nov 2026 00:51:54 +0200</pubDate>
             <sparkle:version>202611240051</sparkle:version>
@@ -30,20 +43,6 @@
 </ul>
 ]]></description>
             <enclosure url="https://github.com/hammadmo/kakeibo/releases/download/v0.3.1/Kakeibo-0.3.1.zip" length="4259329" type="application/octet-stream" sparkle:edSignature="y7a3Pyv/MNeYRZ5vjlQm+aLsxOl5I5E1Wri7/AAgvEgln2RpzqWYgynf6la1LB0exNQY8pJ+UPxseb7ctkKABg=="/>
-        </item>
-        <item>
-            <title>0.3</title>
-            <pubDate>Mon, 23 Nov 2026 16:43:10 +0200</pubDate>
-            <sparkle:version>202611231642</sparkle:version>
-            <sparkle:shortVersionString>0.3</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
-            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
-            <description><![CDATA[<ul>
-<li>Summarize my day (Settings &gt; Alerts, off by default): before the daily Alert, Kakeibo summarizes your three busiest projects with Haiku and puts the first Summary in the Alert. It uses a few thousand tokens of your plan for each.</li>
-<li>Open a project in Finder, your terminal (Terminal, iTerm, Ghostty, Warp), or your editor (VS Code, Cursor, Zed, Xcode): the Open menu on the Today page, or the context menu of a project on the Projects page.</li>
-</ul>
-]]></description>
-            <enclosure url="https://github.com/hammadmo/kakeibo/releases/download/v0.3/Kakeibo-0.3.zip" length="4248824" type="application/octet-stream" sparkle:edSignature="kHmDGM1feYdzF2cfIAOApA/qPbb9TCBNPkiluYkh20k+Ftj659a+4VZNzJ8OcWddC6Ms2N9lFx0kWPORyBqDDQ=="/>
         </item>
     </channel>
 </rss>

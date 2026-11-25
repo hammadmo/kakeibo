@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.3
+- Fixed: limits stopped updating about 8 hours after you last ran `claude` in Terminal ("Showing limits from 8:32 AM…"), even while you used Claude Code in the desktop app. When Claude Code's token expires, Kakeibo now has Claude Code renew it with one tiny Haiku call (about 1,000 tokens, at most every 30 minutes), so limits keep updating, overnight included.
+
 ## 0.3.2
 - Fixed: after a few quiet hours Kakeibo said your Claude Code login had expired and asked you to sign in in Terminal. Only Claude Code's short-lived token had expired, and signing in was never needed. Kakeibo now asks Claude Code to renew it (no tokens spent), keeps showing your last reading, and says limits update the next time Claude Code runs. Open Terminal appears only when you have really signed out.
 
