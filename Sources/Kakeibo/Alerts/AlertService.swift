@@ -114,6 +114,7 @@ final class AlertService {
         content.title = "Kakeibo Alerts are on"
         content.body = "You'll hear from Kakeibo at 80% and 90% of a limit, when it resets, and with the daily numbers."
         content.sound = .default
+        if let art = AlertArt.attachment(percent: 42, warning: false) { content.attachments = [art] }
         let request = UNNotificationRequest(identifier: "test", content: content, trigger: nil)
         return (try? await UNUserNotificationCenter.current().add(request)) != nil
     }
@@ -126,6 +127,7 @@ final class AlertService {
             let content = UNMutableNotificationContent()
             content.title = event.title()
             if let body { content.body = body }
+            if let art = AlertArt.attachment(for: event) { content.attachments = [art] }
             content.sound = event.identifier == "daily" ? nil : .default
             let request = UNNotificationRequest(identifier: event.identifier, content: content, trigger: nil)
             try? await UNUserNotificationCenter.current().add(request)

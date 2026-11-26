@@ -45,7 +45,7 @@ enum Snapshot {
             try? await Task.sleep(for: .seconds(1))
 
             if wants("menubar") { MenuBarSnapshot.render(to: dir) }
-            if wants("kit") { KitGallery.render(to: dir) }
+            if wants("kit") { KitGallery.render(to: dir); KitGallery.renderAlertArt(to: dir) }
 
             if wants("popover") {
                 openWindow(id: PopoverPreview.windowID)

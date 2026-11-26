@@ -75,3 +75,11 @@ running from the replaced bundle. That copy offered 0.3.3, but the app on disk a
 Only the release Mac can get into this state.
 Fix: `release.sh` builds with `--open`, restarting Kakeibo on the new build. Quitting and reopening fixed it here.
 Rule: never leave an app running on a bundle that was replaced under it; restart it after installing.
+
+## Notifications showed a blue placeholder icon
+Symptom: Alerts showed the template's blue default icon, not Kakeibo's 家 icon.
+Cause: Kakeibo first got notification permission before it had its own icon, and the notification service
+(`usernoted`) kept that icon in its cache.
+Fix: restarted `usernoted` and `NotificationCenter` and re-registered the app with `lsregister -f`. Alerts also carry
+an ensō picture now (`AlertArt`), the one part of a notification an app can style.
+Rule: after an app's icon changes, restart `usernoted` once so notifications pick it up.

@@ -210,6 +210,12 @@ enum SelfTest {
                   first && !second && third && runs == 2, "\(first) \(second) \(third) \(runs)")
             unsetenv("APP_CLAUDE")
 
+            // Alerts carry an ensō picture (the part of a notification an app can style).
+            let art = AlertArt.png(percent: 92, warning: true)
+            check("Alerts get an ensō picture", art.map { FileManager.default.fileExists(atPath: $0.path) } ?? false
+                    && AlertArt.attachment(for: .reset(limit: "Session")) != nil)
+            if let art { try? FileManager.default.removeItem(at: art) }
+
             // S-009: old readings are deleted, recent ones kept.
             let old = LimitSnapshot(sessionUsed: 1, sessionResets: .now, weeklyUsed: 1, weeklyResets: .now)
             old.takenAt = Date.now.addingTimeInterval(-91 * 86_400)

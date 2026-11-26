@@ -61,6 +61,18 @@ struct KitGallery: View {
         }
     }
 
+    /// The Alert pictures (AlertArt): 92% warning, a reset, and the daily seal.
+    static func renderAlertArt(to dir: String) {
+        for (name, percent, warning) in [("alert-art-92", Optional(92), true), ("alert-art-reset", Optional(0), false),
+                                         ("alert-art-daily", nil, false)] {
+            guard let url = AlertArt.png(percent: percent, warning: warning) else { continue }
+            let path = "\(dir)/\(name).png"
+            try? FileManager.default.removeItem(atPath: path)
+            try? FileManager.default.moveItem(at: url, to: URL(fileURLWithPath: path))
+            print("SNAPSHOT \(path)")
+        }
+    }
+
     /// Renders the gallery offscreen in light and dark. No window is needed:
     /// the kit draws no glass or materials.
     static func render(to dir: String) {
