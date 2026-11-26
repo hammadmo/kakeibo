@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.5
+- Lighter in the menu bar: Kakeibo wakes up about 0.6 times a second when idle, down from 2.7, because macOS can now batch its timers.
+- Reading your Claude Code logs uses about half the resident memory at its peak (510 MB instead of 1.1 GB for 2.9 GB of logs), at the same speed.
+
 ## 0.3.4
 - Alerts carry a picture in Kakeibo's look: the ensō Gauge on black lacquer with the Used %, in gold, or vermilion with the 家 seal at 90%; a reset shows 0, and the daily numbers show the seal. macOS draws the notification itself, so this picture is the part an app can style.
 

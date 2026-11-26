@@ -3,6 +3,20 @@
     <channel>
         <title>Kakeibo</title>
         <item>
+            <title>0.3.5</title>
+            <pubDate>Thu, 26 Nov 2026 03:17:58 +0200</pubDate>
+            <sparkle:version>202611260317</sparkle:version>
+            <sparkle:shortVersionString>0.3.5</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
+            <description><![CDATA[<ul>
+<li>Lighter in the menu bar: Kakeibo wakes up about 0.6 times a second when idle, down from 2.7, because macOS can now batch its timers.</li>
+<li>Reading your Claude Code logs uses about half the resident memory at its peak (510 MB instead of 1.1 GB for 2.9 GB of logs), at the same speed.</li>
+</ul>
+]]></description>
+            <enclosure url="https://github.com/hammadmo/kakeibo/releases/download/v0.3.5/Kakeibo-0.3.5.zip" length="4269001" type="application/octet-stream" sparkle:edSignature="YO6fxIeSf1DO3+SnW1JUr9T3fxZijykcirRmhQUbp40XmO5s1tYn89WRXTS079M9heSXZGhEx2/lzGegyTm3AA=="/>
+        </item>
+        <item>
             <title>0.3.4</title>
             <pubDate>Thu, 26 Nov 2026 02:48:11 +0200</pubDate>
             <sparkle:version>202611260247</sparkle:version>
@@ -27,19 +41,6 @@
 </ul>
 ]]></description>
             <enclosure url="https://github.com/hammadmo/kakeibo/releases/download/v0.3.3/Kakeibo-0.3.3.zip" length="4264646" type="application/octet-stream" sparkle:edSignature="QLEAzHT9d+Lm26tBwPtU/z71jUJcIfEmVNPDblcAvMOmEl/aTVMhbCWo5uCn2LNwMe+XjF9So12nrAyqVqVGDQ=="/>
-        </item>
-        <item>
-            <title>0.3.2</title>
-            <pubDate>Tue, 24 Nov 2026 00:51:54 +0200</pubDate>
-            <sparkle:version>202611240051</sparkle:version>
-            <sparkle:shortVersionString>0.3.2</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
-            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
-            <description><![CDATA[<ul>
-<li>Fixed: after a few quiet hours Kakeibo said your Claude Code login had expired and asked you to sign in in Terminal. Only Claude Code's short-lived token had expired, and signing in was never needed. Kakeibo now asks Claude Code to renew it (no tokens spent), keeps showing your last reading, and says limits update the next time Claude Code runs. Open Terminal appears only when you have really signed out.</li>
-</ul>
-]]></description>
-            <enclosure url="https://github.com/hammadmo/kakeibo/releases/download/v0.3.2/Kakeibo-0.3.2.zip" length="4265461" type="application/octet-stream" sparkle:edSignature="tv1nceZWEskdDT6D12w/bfhPv2AFZgCWC4nVObAq05GrJClOIhAko8plXDwQ2J6ouNcRATuav+C2Wu1TGbuTAQ=="/>
         </item>
     </channel>
 </rss>
