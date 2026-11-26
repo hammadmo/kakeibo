@@ -73,13 +73,15 @@ public actor UsageStore {
     /// Reads whole lines from `start`; `consumed` stops before a line still
     /// being written, so it is read next time.
     private static func read(_ url: URL, from start: UInt64, project: String) -> (consumed: UInt64, records: [UsageRecord]) {
-        guard let handle = try? FileHandle(forReadingFrom: url) else { return (0, []) }
-        defer { try? handle.close() }
-        try? handle.seek(toOffset: start)
-        guard let data = try? handle.readToEnd(), !data.isEmpty else { return (0, []) }
+        // Mapped, not read: pages come from the file on demand and stay clean, so
+        // a first read of gigabytes of logs doesn't fill the app's memory.
+        guard let mapped = try? Data(contentsOf: url, options: .alwaysMapped),
+              Int(start) < mapped.count else { return (0, []) }
         var consumed = 0
         var found: [UsageRecord] = []
-        data.withUnsafeBytes { (all: UnsafeRawBufferPointer) in
+        // Parse the mapped bytes in place from `start`: no copy.
+        mapped.withUnsafeBytes { (whole: UnsafeRawBufferPointer) in
+            let all = UnsafeRawBufferPointer(rebasing: whole[Int(start)...])
             guard let base = all.baseAddress else { return }
             var lineStart = 0
             while lineStart < all.count,

@@ -50,7 +50,8 @@ final class LimitsService {
         timer = Task { [weak self] in
             while !Task.isCancelled {
                 await self?.fetch()
-                try? await Task.sleep(for: self?.interval ?? .seconds(300))
+                // A tolerance lets macOS batch this wakeup with others.
+                try? await Task.sleep(for: self?.interval ?? .seconds(300), tolerance: .seconds(30))
             }
         }
     }

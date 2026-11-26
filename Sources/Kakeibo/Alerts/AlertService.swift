@@ -78,7 +78,8 @@ final class AlertService {
         timer = Task { [weak self] in
             while !Task.isCancelled {
                 await self?.checkDaily(usage: usage)
-                try? await Task.sleep(for: .seconds(60))
+                // A tolerance lets macOS batch this wakeup with others.
+                try? await Task.sleep(for: .seconds(60), tolerance: .seconds(10))
             }
         }
         Task { await refreshPermission() }

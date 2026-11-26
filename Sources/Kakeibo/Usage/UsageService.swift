@@ -45,7 +45,8 @@ final class UsageService {
         timer = Task { [weak self] in
             while !Task.isCancelled {
                 await self?.refresh()
-                try? await Task.sleep(for: .seconds(60))
+                // A tolerance lets macOS batch this wakeup with others.
+                try? await Task.sleep(for: .seconds(60), tolerance: .seconds(10))
             }
         }
     }
