@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.4
+- Alerts carry a picture in Kakeibo's look: the ensō Gauge on black lacquer with the Used %, in gold, or vermilion with the 家 seal at 90%; a reset shows 0, and the daily numbers show the seal. macOS draws the notification itself, so this picture is the part an app can style.
+
 ## 0.3.3
 - Fixed: limits stopped updating about 8 hours after you last ran `claude` in Terminal ("Showing limits from 8:32 AM…"), even while you used Claude Code in the desktop app. When Claude Code's token expires, Kakeibo now has Claude Code renew it with one tiny Haiku call (about 1,000 tokens, at most every 30 minutes), so limits keep updating, overnight included.
 

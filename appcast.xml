@@ -3,6 +3,19 @@
     <channel>
         <title>Kakeibo</title>
         <item>
+            <title>0.3.4</title>
+            <pubDate>Thu, 26 Nov 2026 02:48:11 +0200</pubDate>
+            <sparkle:version>202611260247</sparkle:version>
+            <sparkle:shortVersionString>0.3.4</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
+            <description><![CDATA[<ul>
+<li>Alerts carry a picture in Kakeibo's look: the ensō Gauge on black lacquer with the Used %, in gold, or vermilion with the 家 seal at 90%; a reset shows 0, and the daily numbers show the seal. macOS draws the notification itself, so this picture is the part an app can style.</li>
+</ul>
+]]></description>
+            <enclosure url="https://github.com/hammadmo/kakeibo/releases/download/v0.3.4/Kakeibo-0.3.4.zip" length="4269473" type="application/octet-stream" sparkle:edSignature="YOo0PfODcLd0apbxOZryNR84GUNuMfdb0Ot390BpJSd+pgxx5yexZlHRH55RxCq+U9iXphGoXVOTl6AcfFgmCA=="/>
+        </item>
+        <item>
             <title>0.3.3</title>
             <pubDate>Wed, 25 Nov 2026 11:40:29 +0200</pubDate>
             <sparkle:version>202611251139</sparkle:version>
@@ -27,22 +40,6 @@
 </ul>
 ]]></description>
             <enclosure url="https://github.com/hammadmo/kakeibo/releases/download/v0.3.2/Kakeibo-0.3.2.zip" length="4265461" type="application/octet-stream" sparkle:edSignature="tv1nceZWEskdDT6D12w/bfhPv2AFZgCWC4nVObAq05GrJClOIhAko8plXDwQ2J6ouNcRATuav+C2Wu1TGbuTAQ=="/>
-        </item>
-        <item>
-            <title>0.3.1</title>
-            <pubDate>Tue, 24 Nov 2026 00:40:12 +0200</pubDate>
-            <sparkle:version>202611240039</sparkle:version>
-            <sparkle:shortVersionString>0.3.1</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
-            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
-            <description><![CDATA[<ul>
-<li><code>kakeibo live</code>: Claude Code sessions that replied in the last 5 minutes, with their tokens.</li>
-<li><code>kakeibo timeline</code>: today's sessions per project, with times, branch, the first prompt, and the prompts and files changed. Add <code>--project</code> for one project.</li>
-<li><code>kakeibo project open &lt;project&gt;</code>: open a project's folder in Finder, or with <code>--in</code> in an installed terminal or editor.</li>
-<li>The same three are tools in Kakeibo's MCP server.</li>
-</ul>
-]]></description>
-            <enclosure url="https://github.com/hammadmo/kakeibo/releases/download/v0.3.1/Kakeibo-0.3.1.zip" length="4259329" type="application/octet-stream" sparkle:edSignature="y7a3Pyv/MNeYRZ5vjlQm+aLsxOl5I5E1Wri7/AAgvEgln2RpzqWYgynf6la1LB0exNQY8pJ+UPxseb7ctkKABg=="/>
         </item>
     </channel>
 </rss>
