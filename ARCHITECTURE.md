@@ -42,10 +42,16 @@ helpers inside out. Never runs in test, CLI, or one-shot runs. Releases: `tools/
 ## Claude Code's CLI
 `ClaudeCode/ClaudeCLI.swift`: everything that runs or reads Claude Code from the outside, nonisolated and blocking
 (callers run it detached): `find()` (APP_CLAUDE for tests, the usual install places, then the login shell's PATH),
-`summarize` (Summaries), `renewLogin` (`claude auth status`, when the Keychain token has expired), `lines` (log files),
+`summarize` (Summaries), `renewLogin` (one tiny Haiku `claude -p` call while the Keychain token is expired; Claude Code
+renews the token before any request, and `claude auth status` does not), `lines` (log files),
 and `commits` (git). Used by Summary, Limits, and the Today timeline.
 
 ## Today, live sessions, and opening Projects (M6, M7)
 `Timeline` and `UsageStore.liveSessions` in KakeiboKit; `UsageService.timeline()` reads a Project's own log files
 detached. `ProjectOpener` opens folders over `NSWorkspace`; which apps are offered is `OpenTarget` in KakeiboKit.
 The daily Alert can call `SummaryService.summarizeAndWait` for the three busiest Projects (Settings > Alerts).
+
+## Alerts
+`AlertService` decides with `AlertRules`/`DailyAlert` (KakeiboKit) and posts through `UNUserNotificationCenter`; test runs
+record instead of posting. `AlertArt` renders the ensō picture each Alert carries (the part of a notification an app can
+style).
