@@ -3,6 +3,20 @@
     <channel>
         <title>Kakeibo</title>
         <item>
+            <title>0.3.6</title>
+            <pubDate>Fri, 27 Nov 2026 22:46:03 +0200</pubDate>
+            <sparkle:version>202611272244</sparkle:version>
+            <sparkle:shortVersionString>0.3.6</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
+            <description><![CDATA[<ul>
+<li>New <code>kakeibo open-at-login on</code> (or <code>off</code>) turns Open at Login on or off from the command line or MCP, without opening Settings. With no state, it shows whether it is on. If macOS needs your approval first, it says so.</li>
+<li>Building from source installs to <code>/Applications/Kakeibo.app</code> instead of <code>~/Applications</code> (<code>APP_DIR</code> picks another folder). Copies from the download or Homebrew are unaffected.</li>
+</ul>
+]]></description>
+            <enclosure url="https://github.com/hammadmo/kakeibo/releases/download/v0.3.6/Kakeibo-0.3.6.zip" length="4269343" type="application/octet-stream" sparkle:edSignature="chUvJa9dFJeJ7e4UVYb+jFlFBNsrao1eLFq1LT7GmRnL/7FAcge51FxweHEC1jKBblcitVF+MySXUTKmYiIkCA=="/>
+        </item>
+        <item>
             <title>0.3.5</title>
             <pubDate>Thu, 26 Nov 2026 03:17:58 +0200</pubDate>
             <sparkle:version>202611260317</sparkle:version>
@@ -28,19 +42,6 @@
 </ul>
 ]]></description>
             <enclosure url="https://github.com/hammadmo/kakeibo/releases/download/v0.3.4/Kakeibo-0.3.4.zip" length="4269473" type="application/octet-stream" sparkle:edSignature="YOo0PfODcLd0apbxOZryNR84GUNuMfdb0Ot390BpJSd+pgxx5yexZlHRH55RxCq+U9iXphGoXVOTl6AcfFgmCA=="/>
-        </item>
-        <item>
-            <title>0.3.3</title>
-            <pubDate>Wed, 25 Nov 2026 11:40:29 +0200</pubDate>
-            <sparkle:version>202611251139</sparkle:version>
-            <sparkle:shortVersionString>0.3.3</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
-            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
-            <description><![CDATA[<ul>
-<li>Fixed: limits stopped updating about 8 hours after you last ran <code>claude</code> in Terminal ("Showing limits from 8:32 AM…"), even while you used Claude Code in the desktop app. When Claude Code's token expires, Kakeibo now has Claude Code renew it with one tiny Haiku call (about 1,000 tokens, at most every 30 minutes), so limits keep updating, overnight included.</li>
-</ul>
-]]></description>
-            <enclosure url="https://github.com/hammadmo/kakeibo/releases/download/v0.3.3/Kakeibo-0.3.3.zip" length="4264646" type="application/octet-stream" sparkle:edSignature="QLEAzHT9d+Lm26tBwPtU/z71jUJcIfEmVNPDblcAvMOmEl/aTVMhbCWo5uCn2LNwMe+XjF9So12nrAyqVqVGDQ=="/>
         </item>
     </channel>
 </rss>

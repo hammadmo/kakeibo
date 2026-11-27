@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.6
+- New `kakeibo open-at-login on` (or `off`) turns Open at Login on or off from the command line or MCP, without opening Settings. With no state, it shows whether it is on. If macOS needs your approval first, it says so.
+- Building from source installs to `/Applications/Kakeibo.app` instead of `~/Applications` (`APP_DIR` picks another folder). Copies from the download or Homebrew are unaffected.
+
 ## 0.3.5
 - Lighter in the menu bar: Kakeibo wakes up about 0.6 times a second when idle, down from 2.7, because macOS can now batch its timers.
 - Reading your Claude Code logs uses about half the resident memory at its peak (510 MB instead of 1.1 GB for 2.9 GB of logs), at the same speed.
