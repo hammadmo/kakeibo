@@ -126,6 +126,19 @@ enum AgentCommands {
             return ["limits": statusName(model.limits.status), "limitsUpdatedAt": model.limits.updatedAt.map(JSON.date) ?? NSNull(),
                     "todayTokens": model.usage.today.tokens]
         },
+        AgentCommand(name: "open-at-login", summary: "Show, turn on, or turn off Open at Login (Settings > General).",
+                     params: [.init(name: "state", positional: true, help: "on, off, or nothing to show it")],
+                     example: "kakeibo open-at-login on") { args, model in
+            let prefs = model.preferences
+            switch args.string("state") {
+            case nil: prefs.refreshLoginState()
+            case "on": prefs.setOpenAtLogin(true)
+            case "off": prefs.setOpenAtLogin(false)
+            case let other?: throw AgentError.usage("state must be on or off, not \"\(other)\"")
+            }
+            if let error = prefs.loginError { throw AgentError.invalid(error) }
+            return ["openAtLogin": prefs.openAtLogin, "app": Bundle.main.bundlePath]
+        },
         AgentCommand(name: "open", summary: "Show a Dashboard page in its window.",
                      params: [.init(name: "page", required: true, positional: true,
                                     help: SidebarItem.allCases.map(\.rawValue).joined(separator: ", "))],
