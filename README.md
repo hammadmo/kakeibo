@@ -205,7 +205,7 @@ remove its data).
 git clone https://github.com/hammadmo/kakeibo && cd kakeibo && ./build.sh --open
 ```
 
-`build.sh` builds with Swift Package Manager, installs to `~/Applications`, and signs
+`build.sh` builds with Swift Package Manager, installs to `/Applications`, and signs
 with your own certificate if you have one. Releases: [docs/RELEASING.md](docs/RELEASING.md).
 How it is put together: [ARCHITECTURE.md](ARCHITECTURE.md).
 

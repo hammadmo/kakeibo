@@ -5,7 +5,7 @@ import KakeiboKit
 
 /// Self-test for agents: runs the app's real functions on a test store,
 /// prints PASS or FAIL per check, and quits with exit code 0 or 1.
-///   APP_STORE=/tmp/Kakeibo-self.store ~/Applications/Kakeibo.app/Contents/MacOS/Kakeibo --selftest
+///   APP_STORE=/tmp/Kakeibo-self.store /Applications/Kakeibo.app/Contents/MacOS/Kakeibo --selftest
 /// (tools/selftest.sh does this.) Add a check for every story with logic.
 @MainActor
 enum SelfTest {

@@ -88,7 +88,7 @@ mkdir -p "$dist"
 # Keep only this version's zip: generate_appcast gives every zip it finds the same URL prefix.
 find "$dist" -name 'Kakeibo-*.zip' -o -name 'Kakeibo-*.html' | while read -r old; do mv "$old" "$old.old"; done
 zip="$dist/Kakeibo-$version.zip"
-ditto -c -k --keepParent "$HOME/Applications/Kakeibo.app" "$zip"
+ditto -c -k --keepParent "/Applications/Kakeibo.app" "$zip"
 sha=$(shasum -a 256 "$zip" | cut -d' ' -f1)
 size=$(stat -f %z "$zip")
 

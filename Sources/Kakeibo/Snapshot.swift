@@ -3,7 +3,7 @@ import IOKit.pwr_mgt
 import SwiftUI
 
 /// Screenshot mode for agents.
-///   APP_STORE=/tmp/test.store APP_SNAPSHOT=/tmp/shots ~/Applications/Kakeibo.app/Contents/MacOS/Kakeibo
+///   APP_STORE=/tmp/test.store APP_SNAPSHOT=/tmp/shots /Applications/Kakeibo.app/Contents/MacOS/Kakeibo
 /// writes <page>-light.png and <page>-dark.png for the menu bar item, the kit
 /// gallery, every popover state, every Dashboard page, and every Settings tab, then quits.
 /// Each PNG gets a <page>-<mode>-layout.json with the grid probes (tools/check-layout.swift).

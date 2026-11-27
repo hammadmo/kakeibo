@@ -1,5 +1,5 @@
 #!/bin/zsh
-# Builds Kakeibo and installs it to ~/Applications/Kakeibo.app.
+# Builds Kakeibo and installs it to /Applications/Kakeibo.app (APP_DIR=<folder> installs elsewhere).
 # Build products live in ~/Library/Developer/Kakeibo, outside the repo
 # (and outside Dropbox or iCloud, which would try to sync them).
 #
@@ -39,8 +39,8 @@ if [[ -n "$stale" ]]; then
   exit 1
 fi
 
-app="$HOME/Applications/$name.app"
-mkdir -p "$HOME/Applications"
+app="${APP_DIR:-/Applications}/$name.app"
+mkdir -p "${APP_DIR:-/Applications}"
 rm -rf "$app"
 mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources"
 cp "$bin" "$app/Contents/MacOS/$name"
